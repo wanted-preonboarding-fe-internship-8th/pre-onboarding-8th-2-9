@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 
 import Button from '../../components/Button';
@@ -8,12 +8,32 @@ import Loader from '../../components/Loader';
 import Toast from '../../components/Toast';
 import { managerList } from '../../temp';
 
+const GROUP_1 = 'To-do';
+const GROUP_2 = 'In Progress';
+const GROUP_3 = 'Complete';
+
+const initialIssueList = [
+  {
+    title: GROUP_1,
+    items: [],
+  },
+  {
+    title: GROUP_2,
+    items: [],
+  },
+  {
+    title: GROUP_3,
+    items: [],
+  },
+];
+
 export default function IssueList() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [issueList, setIssueList] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [issueList, setIssueList] = useState(initialIssueList);
+  const [isLoading, setIsLoading] = useState(false);
 
   const getIssueList = useCallback(() => {
+    setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
     }, 1000);
@@ -29,6 +49,7 @@ export default function IssueList() {
 
   return (
     <>
+      {console.log(issueList)}
       {isLoading && <Loader />}
       <IssueListContainer>
         <header className="header">
@@ -42,6 +63,25 @@ export default function IssueList() {
           />
         </header>
         <div className="issue-contents">
+          {issueList.map((issueGroup, groupId) => {
+            return (
+              <div className="todo issue-box" key={issueGroup.title}>
+                <p className="issue-title todo-title"> {issueGroup.title} </p>
+                {issueGroup.items?.map((issueItem, issueItemId) => {
+                  return (
+                    <IssueCard
+                      key={issueItem.idx}
+                      title={issueItem.title}
+                      manager={issueItem.manager}
+                      lastDate={issueItem.lastDate}
+                    />
+                  );
+                })}
+              </div>
+            );
+          })}
+        </div>
+        {/* <div className="issue-contents">
           <div className="todo issue-box">
             <p className="issue-title todo-title">할 일</p>
             <ul onDragOver={(e) => e.preventDefault()}>
@@ -90,7 +130,7 @@ export default function IssueList() {
               )}
             </ul>
           </div>
-        </div>
+        </div> */}
       </IssueListContainer>
       {isModalOpen && (
         <IssueAddModal
@@ -121,8 +161,10 @@ const IssueListContainer = styled.div`
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
+
     & .issue-box {
       width: 260px;
+
       & .issue-title {
         margin-bottom: 15px;
         font-size: 20px;
@@ -130,9 +172,11 @@ const IssueListContainer = styled.div`
       & .todo-title {
         color: var(--gray-400);
       }
+
       & .progress-title {
         color: var(--progress);
       }
+
       & .complete-title {
         color: var(--complete);
       }

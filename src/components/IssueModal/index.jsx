@@ -6,44 +6,69 @@ import Input from '../Input';
 import Loader from '../Loader';
 import Index from '../TextArea';
 
+const GROUP_1 = 'To-do';
+const GROUP_2 = 'In Progress';
+const GROUP_3 = 'Complete';
+
 const selectData = [
   {
-    value: 'todo',
+    value: GROUP_1,
     name: '할 일',
   },
   {
-    value: 'progress',
+    value: GROUP_2,
     name: '진행중',
   },
-  { value: 'complete', name: '완료' },
+  {
+    value: GROUP_3,
+    name: '완료',
+  },
 ];
 
 export default function IssueModal({ ...props }) {
   const { onClose, managers, issueList } = props;
   const [issues, setIssues] = useState(issueList);
   const [isShowManagers, setIsShowManagers] = useState(false);
-
+  const [issueStatus, setIssueStatus] = useState(GROUP_1);
   const [issueInputValue, setIssueInputValue] = useState({
     id: Date.now(),
     title: '',
     manager: '',
     managerId: 0,
     description: '',
-    status: 'todo',
-    lastDate: '',
+    dueDate: '',
   });
 
+  function groupIndex(groupName) {
+    if (groupName === GROUP_1) {
+      return 0;
+    }
+    if (groupName === GROUP_2) {
+      return 1;
+    }
+    if (groupName === GROUP_3) {
+      return 2;
+    }
+  }
+
   const onChangeStatus = (e) => {
-    setIssueInputValue({
-      ...issueInputValue,
-      status: e.target.value,
-    });
+    console.log(e.target.value);
+    setIssueStatus(e.target.value);
+    // setIssueInputValue({
+    //   ...issueInputValue,
+    //   status: e.target.value,
+    // });
   };
 
   const onSubmitAddIssue = (e) => {
     e.preventDefault();
     try {
-      setIssues((prev) => [...prev, issueInputValue]);
+      setIssues((prev) => {
+        let newList = JSON.parse(JSON.stringify(prev)); // deep copy
+        let targetList = newList[groupIndex(issueStatus)];
+        targetList.items.splice(targetList.length, 0, issueInputValue);
+        return newList;
+      });
     } catch (error) {
       console.log(error);
     }
@@ -174,7 +199,7 @@ export default function IssueModal({ ...props }) {
             onChange={(e) =>
               setIssueInputValue({
                 ...issueInputValue,
-                lastDate: e.target.value,
+                dueDate: e.target.value,
               })
             }
           />
