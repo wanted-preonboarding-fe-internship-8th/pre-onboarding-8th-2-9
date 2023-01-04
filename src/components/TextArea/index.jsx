@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export default function TextArea({ ...props }) {
+export default function Index({ ...props }) {
   const { name, id, placeHolder, value, onChange, onMouseOut } = props;
   return (
     <TextAreaContainer>

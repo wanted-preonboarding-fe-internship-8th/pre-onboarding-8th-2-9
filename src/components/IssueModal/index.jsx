@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import Button from '../Button';
 import Input from '../Input';
 import Loader from '../Loader';
-import TextArea from '../TextArea/TextArea';
+import Index from '../TextArea';
 
 const selectData = [
   {
@@ -143,7 +143,7 @@ export default function IssueModal({ ...props }) {
               </ul>
             )}
           </div>
-          <TextArea
+          <Index
             name="description"
             labelText="내용"
             placeholderText="내용을 입력해주세요."
