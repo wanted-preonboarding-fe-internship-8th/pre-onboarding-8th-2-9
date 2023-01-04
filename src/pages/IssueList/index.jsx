@@ -11,10 +11,9 @@ import { managerList } from '../../temp';
 export default function IssueList() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [issueList, setIssueList] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const getIssueList = useCallback(() => {
-    setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
     }, 1000);
@@ -27,8 +26,6 @@ export default function IssueList() {
   useEffect(() => {
     getIssueList();
   }, [getIssueList]);
-
-  console.log(issueList);
 
   return (
     <>
