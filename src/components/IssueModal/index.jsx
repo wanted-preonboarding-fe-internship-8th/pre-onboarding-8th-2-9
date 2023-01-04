@@ -1,35 +1,23 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { ISSUE_FORM_LABEL, ISSUE_STATE } from '../../enums';
 import Button from '../Button';
 import Input from '../Input';
-import Loader from '../Loader';
 import Index from '../TextArea';
 
-const selectData = [
-  {
-    value: 'todo',
-    name: '할 일',
-  },
-  {
-    value: 'progress',
-    name: '진행중',
-  },
-  { value: 'complete', name: '완료' },
-];
-
 export default function IssueModal({ ...props }) {
-  const { onClose, managers, issueList, setIssueList } = props;
+  const { onClose, managers, issueList, setIssueList, issue } = props;
   const [isShowManagers, setIsShowManagers] = useState(false);
 
   const [issueInputValue, setIssueInputValue] = useState({
     id: Date.now(),
-    title: '',
-    manager: '',
+    title: issue?.title || '',
+    manager: issue?.manager || '',
     managerId: 0,
-    description: '',
-    status: 'todo',
-    lastDate: '',
+    description: issue?.description || '',
+    status: issue?.status || 'todo',
+    lastDate: issue?.lastDate || '',
   });
 
   const onChangeStatus = (e) => {
@@ -70,8 +58,9 @@ export default function IssueModal({ ...props }) {
         <form onSubmit={onSubmitAddIssue}>
           <Input
             name="title"
-            labelText="제목"
+            labelText={ISSUE_FORM_LABEL.TITLE}
             placeholderText="제목을 입력해주세요."
+            value={issueInputValue.title}
             onChange={(e) =>
               setIssueInputValue({ ...issueInputValue, title: e.target.value })
             }
@@ -80,7 +69,7 @@ export default function IssueModal({ ...props }) {
             <Input
               name="manager"
               margin="0"
-              labelText="담당자"
+              labelText={ISSUE_FORM_LABEL.MANAGER}
               placeholderText="담당자를 입력해주세요."
               value={issueInputValue.manager}
               onChange={(e) =>
@@ -144,8 +133,9 @@ export default function IssueModal({ ...props }) {
           </div>
           <Index
             name="description"
-            labelText="내용"
+            labelText={ISSUE_FORM_LABEL.CONTENT}
             placeholderText="내용을 입력해주세요."
+            value={issueInputValue.description}
             onChange={(e) =>
               setIssueInputValue({
                 ...issueInputValue,
@@ -155,21 +145,22 @@ export default function IssueModal({ ...props }) {
           />
           <p className="title">상태</p>
           <select
-            value={issueInputValue.status || 'todo'}
             className="status-select"
+            value={issueInputValue.status}
             onChange={(e) => onChangeStatus(e)}
           >
-            {selectData.map((data) => (
-              <option key={data.value} value={data.value}>
-                {data.name}
+            {Object.values(ISSUE_STATE).map((state) => (
+              <option key={state.value} value={state.value}>
+                {state.label}
               </option>
             ))}
           </select>
           <Input
             type="datetime-local"
             name="date"
-            labelText="마감일"
+            labelText={ISSUE_FORM_LABEL.DUE_DATE}
             placeholderText="마감일을 입력해주세요."
+            value={issueInputValue.lastDate}
             onChange={(e) =>
               setIssueInputValue({
                 ...issueInputValue,
