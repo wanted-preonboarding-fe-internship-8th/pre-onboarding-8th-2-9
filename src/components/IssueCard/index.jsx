@@ -1,7 +1,5 @@
 import styled from 'styled-components';
 
-import { managerList } from '../../temp';
-
 export default function IssueCard({ ...props }) {
   const { title, manager, lastDate, onEdit, onMoveDetail } = props;
 
