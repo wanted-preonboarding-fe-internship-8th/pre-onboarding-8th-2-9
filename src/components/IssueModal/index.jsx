@@ -19,8 +19,7 @@ const selectData = [
 ];
 
 export default function IssueModal({ ...props }) {
-  const { onClose, managers, issueList } = props;
-  const [issues, setIssues] = useState(issueList);
+  const { onClose, managers, issueList, setIssueList } = props;
   const [isShowManagers, setIsShowManagers] = useState(false);
 
   const [issueInputValue, setIssueInputValue] = useState({
@@ -43,14 +42,14 @@ export default function IssueModal({ ...props }) {
   const onSubmitAddIssue = (e) => {
     e.preventDefault();
     try {
-      setIssues((prev) => [...prev, issueInputValue]);
+      setIssueList((prev) => [...prev, issueInputValue]);
     } catch (error) {
       console.log(error);
     }
   };
 
   useEffect(() => {
-    localStorage.setItem('issueList', JSON.stringify(issues));
+    localStorage.setItem('issueList', JSON.stringify(issueList));
   }, [onSubmitAddIssue]);
 
   return (
