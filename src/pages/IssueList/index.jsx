@@ -28,8 +28,6 @@ export default function IssueList() {
     getIssueList();
   }, [getIssueList]);
 
-  console.log(issueList);
-
   return (
     <>
       {isLoading && <Loader />}
@@ -51,12 +49,7 @@ export default function IssueList() {
               {issueList?.map(
                 (issue, idx) =>
                   issue.status === 'todo' && (
-                    <IssueCard
-                      key={idx}
-                      title={issue.title}
-                      manager={issue.manager}
-                      lastDate={issue.lastDate}
-                    />
+                    <IssueCard key={idx} issue={issue} />
                   )
               )}
             </ul>
@@ -98,11 +91,12 @@ export default function IssueList() {
       {isModalOpen && (
         <IssueAddModal
           issueList={issueList}
+          setIssueList={setIssueList}
+          managers={managerList}
           onClose={() => {
             setIsModalOpen(false);
             getIssueList();
           }}
-          managers={managerList}
         />
       )}
       {/* todo: recoil 변경 -> 각 파트에서 예외처리 */}
