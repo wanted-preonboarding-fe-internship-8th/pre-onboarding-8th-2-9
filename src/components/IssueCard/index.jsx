@@ -5,7 +5,6 @@ import IssueModal from '../IssueModal';
 
 export default function IssueCard({ ...props }) {
   const { issue } = props;
-  console.log(issue);
   const [isEdit, setIsEdit] = useState(false);
 
   return (

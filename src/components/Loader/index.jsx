@@ -1,5 +1,13 @@
 import styled from 'styled-components';
 
+const Loader = () => {
+  return (
+    <LoaderContainer>
+      <div className="spinner"></div>
+    </LoaderContainer>
+  );
+};
+
 const LoaderContainer = styled.div`
   position: fixed;
   top: 0;
@@ -74,13 +82,5 @@ const LoaderContainer = styled.div`
     }
   }
 `;
-
-const Loader = () => {
-  return (
-    <LoaderContainer>
-      <div className="spinner"></div>
-    </LoaderContainer>
-  );
-};
 
 export default Loader;

@@ -11,10 +11,9 @@ import { managerList } from '../../temp';
 export default function IssueList() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [issueList, setIssueList] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const getIssueList = useCallback(() => {
-    setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
     }, 1000);
@@ -118,10 +117,8 @@ const IssueListContainer = styled.div`
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
-
     & .issue-box {
       width: 260px;
-
       & .issue-title {
         margin-bottom: 15px;
         font-size: 20px;
@@ -129,11 +126,9 @@ const IssueListContainer = styled.div`
       & .todo-title {
         color: var(--gray-400);
       }
-
       & .progress-title {
         color: var(--progress);
       }
-
       & .complete-title {
         color: var(--complete);
       }
