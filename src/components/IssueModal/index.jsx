@@ -52,12 +52,7 @@ export default function IssueModal({ ...props }) {
   }
 
   const onChangeStatus = (e) => {
-    console.log(e.target.value);
     setIssueStatus(e.target.value);
-    // setIssueInputValue({
-    //   ...issueInputValue,
-    //   status: e.target.value,
-    // });
   };
 
   const onSubmitAddIssue = (e) => {

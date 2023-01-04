@@ -1,13 +1,29 @@
 import styled from 'styled-components';
 
 export default function IssueCard({ ...props }) {
-  const { title, manager, lastDate, onEdit, onMoveDetail } = props;
+  const {
+    title,
+    manager,
+    dueDate,
+    groupId,
+    issueItemId,
+    dragging,
+    handleDragStart,
+    handleDragEnter,
+    handleDragEnd,
+  } = props;
 
   return (
-    <IssueCardContainer draggable>
+    <IssueCardContainer
+      draggable
+      onDragStart={(e) => handleDragStart(e, { groupId, issueItemId })}
+      onDragEnter={
+        dragging ? (e) => handleDragEnter(e, { groupId, issueItemId }) : null
+      }
+    >
       <p className="title">{title}</p>
       <p className="manager">{manager}</p>
-      <p className="last-date">{lastDate}</p>
+      <p className="last-date">{dueDate}</p>
     </IssueCardContainer>
   );
 }

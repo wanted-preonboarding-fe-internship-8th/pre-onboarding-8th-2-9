@@ -31,6 +31,10 @@ export default function IssueList() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [issueList, setIssueList] = useState(initialIssueList);
   const [isLoading, setIsLoading] = useState(false);
+  const [dragging, setDragging] = useState(false);
+
+  const dragItem = useRef();
+  const dragNode = useRef();
 
   const getIssueList = useCallback(() => {
     setIsLoading(true);
@@ -43,13 +47,44 @@ export default function IssueList() {
     }
   }, []);
 
+  const handleDragStart = (e, params) => {
+    dragItem.current = params;
+    dragNode.current = e.target;
+    dragNode.current.addEventListener('dragend', handleDragEnd);
+    setDragging(true);
+  };
+
+  const handleDragEnter = (e, params) => {
+    const currentItem = dragItem.current;
+    if (e.target !== dragNode.current) {
+      setIssueList((prev) => {
+        let newList = JSON.parse(JSON.stringify(prev)); // deep copy
+        let targetList = newList[params.groupId].items;
+        let selectedList = newList[currentItem.groupId].items;
+        targetList.splice(
+          params.issueItemId,
+          0,
+          selectedList.splice(currentItem.itemI, 1)[0]
+        );
+        dragItem.current = params;
+        return newList;
+      });
+    }
+  };
+
+  const handleDragEnd = () => {
+    setDragging(false);
+    dragNode.current.removeEventListener('dragend', handleDragEnd);
+    dragItem.current = null;
+    dragNode.current = null;
+  };
+
   useEffect(() => {
     getIssueList();
   }, [getIssueList]);
 
   return (
     <>
-      {console.log(issueList)}
       {isLoading && <Loader />}
       <IssueListContainer>
         <header className="header">
@@ -65,15 +100,29 @@ export default function IssueList() {
         <div className="issue-contents">
           {issueList.map((issueGroup, groupId) => {
             return (
-              <div className="todo issue-box" key={issueGroup.title}>
+              <div
+                className="todo issue-box"
+                key={issueGroup.title}
+                onDragEnter={
+                  dragging && !issueGroup.items.length
+                    ? (e) => handleDragEnter(e, { groupId, issueItemId: 0 })
+                    : null
+                }
+              >
                 <p className="issue-title todo-title"> {issueGroup.title} </p>
                 {issueGroup.items?.map((issueItem, issueItemId) => {
                   return (
                     <IssueCard
-                      key={issueItem.idx}
+                      key={`${issueGroup.title}-${issueItemId}`}
                       title={issueItem.title}
                       manager={issueItem.manager}
-                      lastDate={issueItem.lastDate}
+                      dueDate={issueItem.dueDate}
+                      groupId={groupId}
+                      issueItemId={issueItemId}
+                      dragging={dragging}
+                      handleDragStart={handleDragStart}
+                      handleDragEnter={handleDragEnter}
+                      handleDragEnd={handleDragEnd}
                     />
                   );
                 })}
@@ -81,56 +130,6 @@ export default function IssueList() {
             );
           })}
         </div>
-        {/* <div className="issue-contents">
-          <div className="todo issue-box">
-            <p className="issue-title todo-title">할 일</p>
-            <ul onDragOver={(e) => e.preventDefault()}>
-              {issueList?.map(
-                (issue, idx) =>
-                  issue.status === 'todo' && (
-                    <IssueCard
-                      key={idx}
-                      title={issue.title}
-                      manager={issue.manager}
-                      lastDate={issue.lastDate}
-                    />
-                  )
-              )}
-            </ul>
-          </div>
-          <div className="progress issue-box">
-            <p className="issue-title progress-title">진행중</p>
-            <ul onDragOver={(e) => e.preventDefault()}>
-              {issueList?.map(
-                (issue, idx) =>
-                  issue.status === 'progress' && (
-                    <IssueCard
-                      key={idx}
-                      title={issue.title}
-                      manager={issue.manager}
-                      lastDate={issue.lastDate}
-                    />
-                  )
-              )}
-            </ul>
-          </div>
-          <div className="complete issue-box">
-            <p className="issue-title complete-title">완료</p>
-            <ul onDragOver={(e) => e.preventDefault()}>
-              {issueList?.map(
-                (issue, idx) =>
-                  issue.status === 'complete' && (
-                    <IssueCard
-                      key={idx}
-                      title={issue.title}
-                      manager={issue.manager}
-                      lastDate={issue.lastDate}
-                    />
-                  )
-              )}
-            </ul>
-          </div>
-        </div> */}
       </IssueListContainer>
       {isModalOpen && (
         <IssueAddModal
