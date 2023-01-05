@@ -87,8 +87,8 @@ export default function IssueList() {
           setIssueList={setIssueList}
           managers={managerList}
           onClose={() => {
-            setIsModalOpen(false);
             getIssueList();
+            setIsModalOpen(false);
           }}
         />
       )}
