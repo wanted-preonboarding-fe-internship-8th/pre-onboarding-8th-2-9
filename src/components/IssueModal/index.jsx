@@ -12,8 +12,8 @@ import Index from '../TextArea';
 export default function IssueModal({ ...props }) {
   const { type, closeModal, managers, issueList, issue } = props;
   const [toast, setToast] = useRecoilState(toastState);
-  const [isShowManagers, setIsShowManagers] = useState(false);
-  const [issueStatus, setIssueStatus] = useState(issue?.state);
+  const [searchInput, setSearchInput] = useState('');
+  const [searchedManagers, setSearchedManagers] = useState([]);
   const [issueInputValue, setIssueInputValue] = useInput({
     id: issue?.id || Date.now(),
     title: issue?.title || '',
@@ -58,6 +58,22 @@ export default function IssueModal({ ...props }) {
     closeModal();
   };
 
+  const searchManagers = (e) => {
+    setSearchInput(e.target.value);
+    if (e.target.value === '') {
+      setSearchedManagers([]);
+      return;
+    }
+    const searchedManagers = managers.filter((manager) =>
+      manager.name.includes(e.target.value)
+    );
+    setSearchedManagers(searchedManagers);
+  };
+
+  const clickManagerChip = (manager, e) => {
+    setSearchInput(manager.name);
+  };
+
   return (
     <>
       <IssueAddModalContainer>
@@ -85,54 +101,31 @@ export default function IssueModal({ ...props }) {
             margin="0"
             labelText={ISSUE_FORM_LABEL.MANAGER}
             placeholderText="담당자를 입력해주세요."
-            value={issueInputValue.manager}
-            onChange={setIssueInputValue}
-            onClick={() => setIsShowManagers(true)}
+            value={searchInput}
+            onChange={searchManagers}
           />
-          {isShowManagers && (
-            <ul className="manager-list">
-              {issueInputValue.manager &&
-                managers?.map(
-                  (manager, idx) =>
-                    manager.name.includes(issueInputValue.manager) && (
-                      <li
-                        key={idx}
-                        className="manager cursor-pointer"
-                        onClick={() =>
-                          setIssueInputValue({
-                            ...issueInputValue,
-                            manager: manager.name,
-                          })
-                        }
-                      >
-                        <p
-                          className="chip"
-                          style={{
-                            background: `var(--manager-${manager.id})`,
-                          }}
-                        >
-                          {manager.name}
-                        </p>
-                      </li>
-                    )
-                )}
-              {!issueInputValue.manager &&
-                managers?.map((manager, idx) => (
-                  <li
-                    key={manager.id}
-                    className="manager cursor-pointer"
-                    onClick={setIssueInputValue}
+          <ul className="manager-list">
+            {searchedManagers.map((manager) => {
+              return (
+                <li
+                  data-name="manager"
+                  key={manager.id}
+                  className="manager cursor-pointer"
+                >
+                  <p
+                    className="chip"
+                    style={{ background: `var(--manager-${manager.id})` }}
+                    onClick={(e) => {
+                      setIssueInputValue(e);
+                      clickManagerChip(manager, e);
+                    }}
                   >
-                    <p
-                      className="chip"
-                      style={{ background: `var(--manager-${manager.id})` }}
-                    >
-                      {manager.name}
-                    </p>
-                  </li>
-                ))}
-            </ul>
-          )}
+                    {manager.name}
+                  </p>
+                </li>
+              );
+            })}
+          </ul>
         </div>
         <Index
           name="description"
@@ -193,6 +186,8 @@ const IssueAddModalContainer = styled.div`
   }
 
   & .manager-list {
+    display: flex;
+    flex-direction: row;
     text-align: left;
     & .manager {
       & .chip {
