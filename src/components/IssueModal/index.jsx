@@ -121,8 +121,7 @@ export default function IssueModal({ ...props }) {
               {issueInputValue.manager &&
                 managers?.map(
                   (manager, idx) =>
-                    manager.name.includes(issueInputValue.manager) &&
-                    manager.name !== issueInputValue.manager && (
+                    manager.name.includes(issueInputValue.manager) && (
                       <li
                         key={idx}
                         className="manager cursor-pointer"
