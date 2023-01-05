@@ -6,54 +6,26 @@ import IssueCard from '../../components/IssueCard';
 import IssueAddModal from '../../components/IssueModal';
 import Loader from '../../components/Loader';
 import Toast from '../../components/Toast';
+import { initialIssueList } from '../../data';
 import { managerList } from '../../temp';
-
-const GROUP_1 = 'To-do';
-const GROUP_2 = 'In Progress';
-const GROUP_3 = 'Complete';
-
-const initialIssueList = [
-  {
-    title: GROUP_1,
-    items: [
-      {
-        title: 'hey',
-        manager: '김다희',
-        dueDate: new Date().getDate(),
-        groupId: 0,
-        issueItemId: new Date().getDate(),
-      },
-    ],
-  },
-  {
-    title: GROUP_2,
-    items: [],
-  },
-  {
-    title: GROUP_3,
-    items: [],
-  },
-];
 
 export default function IssueList() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [issueList, setIssueList] = useState(initialIssueList);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [dragging, setDragging] = useState(false);
 
   const dragItem = useRef();
   const dragNode = useRef();
 
-  const getIssueList = useCallback(() => {
-    setIsLoading(true);
+  const getIssueList = () => {
     setTimeout(() => {
       setIsLoading(false);
     }, 1000);
-    //todo: sort
     if (localStorage.getItem('issueList')) {
       setIssueList(JSON.parse(localStorage.getItem('issueList')));
     }
-  }, []);
+  };
 
   const handleDragStart = (e, params) => {
     dragItem.current = params;
@@ -67,12 +39,12 @@ export default function IssueList() {
     if (e.target !== dragNode.current) {
       setIssueList((prev) => {
         let newList = JSON.parse(JSON.stringify(prev)); // deep copy
-        let targetList = newList[params.groupId].items;
-        let selectedList = newList[currentItem.groupId].items;
-        targetList.splice(
+        let targetList = newList[params.groupId]?.items;
+        let selectedList = newList[currentItem.groupId]?.items;
+        targetList?.splice(
           params.issueItemId,
           0,
-          selectedList.splice(currentItem.itemI, 1)[0]
+          selectedList?.splice(currentItem.itemI, 1)[0]
         );
         dragItem.current = params;
         return newList;
@@ -87,9 +59,16 @@ export default function IssueList() {
     dragNode.current = null;
   };
 
+  const openModal = () => setIsModalOpen(true);
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    getIssueList();
+  };
+
   useEffect(() => {
     getIssueList();
-  }, [getIssueList]);
+  }, []);
 
   return (
     <>
@@ -102,38 +81,31 @@ export default function IssueList() {
             width="100px"
             text="+ 추가"
             background="var(--progress)"
-            onClick={() => setIsModalOpen(true)}
+            onClick={openModal}
           />
         </header>
         <div className="issue-contents">
-          {issueList.map((issueGroup, groupId) => {
+          {issueList.map((group) => {
             return (
-              <div
-                className="todo issue-box"
-                key={issueGroup.title}
-                onDragEnter={
-                  dragging && !issueGroup?.items.length
-                    ? (e) => handleDragEnter(e, { groupId, issueItemId: 0 })
-                    : null
-                }
-              >
-                <p className="issue-title todo-title"> {issueGroup.title} </p>
-                {issueGroup.items?.map((issueItem, issueItemId) => {
-                  return (
-                    <IssueCard
-                      key={`${issueGroup.title}-${issueItemId}`}
-                      title={issueItem.title}
-                      manager={issueItem.manager}
-                      dueDate={issueItem.dueDate}
-                      groupId={groupId}
-                      issueItemId={issueItemId}
-                      dragging={dragging}
-                      handleDragStart={handleDragStart}
-                      handleDragEnter={handleDragEnter}
-                      handleDragEnd={handleDragEnd}
-                    />
-                  );
-                })}
+              <div className="todo issue-box" key={group?.title}>
+                <p className={`issue-title ${group?.label}-title`}>
+                  {group?.title}
+                </p>
+                <ul onDragOver={(e) => e.preventDefault()}>
+                  {group?.items?.map((issue) => {
+                    return (
+                      <IssueCard
+                        key={issue.id}
+                        issue={issue}
+                        getIssueList={getIssueList}
+                        group={group}
+                        handleDragStart={handleDragStart}
+                        handleDragEnter={handleDragEnter}
+                        dragging={dragging}
+                      />
+                    );
+                  })}
+                </ul>
               </div>
             );
           })}
@@ -141,17 +113,14 @@ export default function IssueList() {
       </IssueListContainer>
       {isModalOpen && (
         <IssueAddModal
+          type="ADD"
           issueList={issueList}
           setIssueList={setIssueList}
           managers={managerList}
-          onClose={() => {
-            setIsModalOpen(false);
-            getIssueList();
-          }}
+          closeModal={closeModal}
         />
       )}
-      {/* todo: recoil 변경 -> 각 파트에서 예외처리 */}
-      <Toast status="error" message="등록에 실패했습니다." />
+      {/*<Toast status="error" message="등록에 실패했습니다." />*/}
     </>
   );
 }
@@ -169,10 +138,8 @@ const IssueListContainer = styled.div`
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
-
     & .issue-box {
       width: 260px;
-
       & .issue-title {
         margin-bottom: 15px;
         font-size: 20px;
@@ -180,11 +147,9 @@ const IssueListContainer = styled.div`
       & .todo-title {
         color: var(--gray-400);
       }
-
       & .progress-title {
         color: var(--progress);
       }
-
       & .complete-title {
         color: var(--complete);
       }

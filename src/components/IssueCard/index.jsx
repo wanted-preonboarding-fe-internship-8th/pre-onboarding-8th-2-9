@@ -5,29 +5,41 @@ import IssueModal from '../IssueModal';
 
 export default function IssueCard({ ...props }) {
   const {
-    title,
-    manager,
-    dueDate,
+    issue,
     groupId,
+    getIssueList,
     issueItemId,
     dragging,
     handleDragStart,
     handleDragEnter,
-    handleDragEnd,
   } = props;
 
+  const [isEdit, setIsEdit] = useState(false);
+
+  const openModal = () => setIsEdit(true);
+  const closeModal = () => {
+    setIsEdit(false);
+    getIssueList();
+  };
+
   return (
-    <IssueCardContainer
-      draggable
-      onDragStart={(e) => handleDragStart(e, { groupId, issueItemId })}
-      onDragEnter={
-        dragging ? (e) => handleDragEnter(e, { groupId, issueItemId }) : null
-      }
-    >
-      <p className="title">{title}</p>
-      <p className="manager">{manager}</p>
-      <p className="last-date">{dueDate}</p>
-    </IssueCardContainer>
+    <>
+      <IssueCardContainer
+        onClick={openModal}
+        draggable
+        onDragStart={(e) => handleDragStart(e, { groupId, issueItemId })}
+        onDragEnter={
+          dragging ? (e) => handleDragEnter(e, { groupId, issueItemId }) : null
+        }
+      >
+        <p className="title">{issue?.title}</p>
+        <p className="manager">{issue?.manager}</p>
+        <p className="last-date">{issue?.lastDate}</p>
+      </IssueCardContainer>
+      {isEdit && (
+        <IssueModal type="EDIT" issue={issue} closeModal={closeModal} />
+      )}
+    </>
   );
 }
 
