@@ -18,15 +18,18 @@ export default function IssueList() {
       return;
     }
     setIssueList(JSON.parse(localStorage.getItem('issueList')));
-    //todo: sort
-    //todo: add 시, loading 풀림
-  }, []);
+  }, [issueList]);
+
+  const onModalClose = async () => {
+    await getIssueList();
+    setIsModalOpen(false);
+  };
 
   useEffect(() => {
     setTimeout(() => {
       getIssueList();
       setIsLoading(false);
-    }, 2000);
+    }, 1000);
   }, [getIssueList]);
 
   return (
@@ -50,7 +53,11 @@ export default function IssueList() {
               {issueList?.map(
                 (issue, idx) =>
                   issue.status === 'todo' && (
-                    <IssueCard key={idx} issue={issue} />
+                    <IssueCard
+                      key={idx}
+                      issue={issue}
+                      onModalClose={onModalClose}
+                    />
                   )
               )}
             </ul>
@@ -79,17 +86,13 @@ export default function IssueList() {
           </div>
         </div>
       </IssueListContainer>
-
       {isModalOpen && (
         <IssueAddModal
           type="ADD"
           issueList={issueList}
           setIssueList={setIssueList}
           managers={managerList}
-          onClose={() => {
-            getIssueList();
-            setIsModalOpen(false);
-          }}
+          onModalClose={onModalClose}
         />
       )}
       {/* todo: recoil 변경 -> 각 파트에서 예외처리 */}
