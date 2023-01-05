@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 
@@ -7,7 +7,6 @@ import Button from '../../components/Button';
 import IssueCard from '../../components/IssueCard';
 import IssueAddModal from '../../components/IssueModal';
 import Loader from '../../components/Loader';
-import Toast from '../../components/Toast';
 import { initialIssueList } from '../../data';
 import { managerList } from '../../temp';
 
@@ -33,7 +32,7 @@ export default function IssueList() {
   const handleDragStart = (e, params) => {
     dragItem.current = params;
     dragNode.current = e.target;
-    dragNode.current.addEventListener('dragend', handleDragEnd);
+    dragNode.current?.addEventListener('dragend', handleDragEnd);
     setDragging(true);
   };
 
@@ -58,7 +57,7 @@ export default function IssueList() {
 
   const handleDragEnd = () => {
     setDragging(false);
-    dragNode.current.removeEventListener('dragend', handleDragEnd);
+    dragNode.current?.removeEventListener('dragend', handleDragEnd);
     dragItem.current = null;
     dragNode.current = null;
   };
@@ -99,30 +98,39 @@ export default function IssueList() {
               <div
                 className="todo issue-box"
                 key={group?.title}
-                onDragEnter={
-                  dragging && !group.items.length
-                    ? (e) => handleDragEnter(e, { groupId, issueItemId: 0 })
-                    : null
-                }
+                // onDragEnter={
+                //   dragging && !group.items.length
+                //     ? (e) => handleDragEnter(e, { groupId, issueItemId: 0 })
+                //     : null
+                // }
               >
                 <p className={`issue-title ${group?.label}-title`}>
                   {group?.title}
                 </p>
-                {group?.items?.map((issue, issueId) => {
-                  return (
-                    <IssueCard
-                      key={issue.id}
-                      issue={issue}
-                      getIssueList={getIssueList}
-                      group={group}
-                      groupId={groupId}
-                      dragging={dragging}
-                      handleDragStart={handleDragStart}
-                      handleDragEnter={handleDragEnter}
-                      handleDragEnd={handleDragEnd}
-                    />
-                  );
-                })}
+                <ul
+                  onDragOver={
+                    dragging
+                      ? (e) => handleDragEnter(e, { groupId, issueItemId: 0 })
+                      : null
+                  }
+                  style={{ height: '100vh' }}
+                >
+                  {group?.items?.map((issue, issueItemId) => {
+                    return (
+                      <IssueCard
+                        key={issue.id}
+                        issue={issue}
+                        issueItemId={issueItemId}
+                        getIssueList={getIssueList}
+                        group={group}
+                        groupId={groupId}
+                        dragging={dragging}
+                        handleDragStart={handleDragStart}
+                        handleDragEnter={handleDragEnter}
+                      />
+                    );
+                  })}
+                </ul>
               </div>
             );
           })}
@@ -137,7 +145,6 @@ export default function IssueList() {
           closeModal={closeModal}
         />
       )}
-      {toast && <Toast status={toast.status} message={toast.message} />}
     </>
   );
 }
