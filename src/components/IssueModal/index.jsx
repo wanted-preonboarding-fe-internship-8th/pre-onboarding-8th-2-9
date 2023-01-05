@@ -7,12 +7,8 @@ import Input from '../Input';
 import Index from '../TextArea';
 
 export default function IssueModal({ ...props }) {
-  //type: edit or add indicator
-  const { type, onClose, managers, issueList, issue } = props;
+  const { type, managers, issueList, issue, onModalClose } = props;
   const [isShowManagers, setIsShowManagers] = useState(false);
-  // refactoring
-
-  console.log(issue);
 
   const [issueInputValue, setIssueInputValue] = useState({
     id: Date.now(),
@@ -31,31 +27,33 @@ export default function IssueModal({ ...props }) {
     });
   };
 
-  //add issue
-  const onSubmitAddIssue = async () => {
-    const newIssutList = [...issueList, issueInputValue];
-    localStorage.setItem('issueList', JSON.stringify(newIssutList));
-    onClose();
+  const onSubmitAddIssue = () => {
+    const newIssueList = [...issueList, issueInputValue];
+    localStorage.setItem('issueList', JSON.stringify(newIssueList));
+    onModalClose();
   };
-  //todo: edit
-  //edit issue
-  const onSubmitEditIssue = () => {};
+
+  const onSubmitEditIssue = () => {
+    const issueList = localStorage.getItem('issueList');
+    const newIssueList = [...issueList, issueInputValue];
+    localStorage.setItem('issueList', JSON.stringify(newIssueList));
+    onModalClose();
+  };
 
   return (
     <>
       <IssueAddModalContainer>
         <div className="header">
-          <h2>ISSUE 등록</h2>
+          <h2>ISSUE {type === 'EDIT' ? '수정' : '등록'}</h2>
           <Button
             background=""
             text="X"
             color="var(--black)"
             width="50px"
             margin=""
-            onClick={() => onClose()}
+            onClick={() => onModalClose()}
           />
         </div>
-
         <Input
           name="title"
           labelText={ISSUE_FORM_LABEL.TITLE}
@@ -165,7 +163,7 @@ export default function IssueModal({ ...props }) {
           }
         />
       </IssueAddModalContainer>
-      <Overlay onClick={() => onClose()} />
+      <Overlay onClick={() => onModalClose()} />
     </>
   );
 }
