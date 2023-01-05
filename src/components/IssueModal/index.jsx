@@ -45,7 +45,7 @@ export default function IssueModal({ ...props }) {
     const groupIndex = issueList?.findIndex(
       (group) => group.label === issueInputValue.status
     );
-    const issueIndex = issueList[groupIndex].items.findIndex(
+    const issueIndex = issueList[groupIndex]?.items.findIndex(
       (item) => item.id === issueInputValue.id
     );
     issueList[groupIndex].items[issueIndex] = issueInputValue;
