@@ -101,7 +101,11 @@ export default function IssueList() {
                 <ul
                   onDragEnter={
                     dragging && dragItem.current.groupId !== groupId
-                      ? (e) => handleDragEnter(e, { groupId, issueItemId: 0 })
+                      ? (e) =>
+                          handleDragEnter(e, {
+                            groupId,
+                            issueItemId: issueList[groupId].items.length,
+                          })
                       : null
                   }
                   style={{ height: '100vh' }}
