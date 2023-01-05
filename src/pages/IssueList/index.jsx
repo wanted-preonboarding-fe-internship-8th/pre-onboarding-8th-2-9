@@ -78,8 +78,6 @@ export default function IssueList() {
     setTimeout(() => setToast(''), [1500]);
   }, [toast]);
 
-  console.log(toast);
-
   return (
     <>
       {isLoading && <Loader />}
