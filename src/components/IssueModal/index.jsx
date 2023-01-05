@@ -42,7 +42,6 @@ export default function IssueModal({ ...props }) {
     setToast({ status: 'success', message: '성공적으로 등록되었습니다.' });
     closeModal();
   };
-  console.log(toast);
 
   const onSubmitEditIssue = () => {
     const issueList = JSON.parse(localStorage.getItem('issueList'));
