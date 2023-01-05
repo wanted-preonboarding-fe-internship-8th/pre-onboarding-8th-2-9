@@ -94,25 +94,13 @@ export default function IssueList() {
         <div className="issue-contents">
           {issueList.map((group, groupId) => {
             return (
-              <div
-                className="todo issue-box"
-                key={group?.title}
-                onDragEnter={
-                  dragging &&
-                  dragItem.current.groupId !== groupId &&
-                  !group.items.length
-                    ? (e) => handleDragEnter(e, { groupId, issueItemId: 0 })
-                    : null
-                }
-              >
+              <div className="todo issue-box" key={group?.title}>
                 <p className={`issue-title ${group?.label}-title`}>
                   {group?.title}
                 </p>
                 <ul
                   onDragEnter={
-                    dragging &&
-                    dragItem.current.groupId !== groupId &&
-                    group.items.length
+                    dragging && dragItem.current.groupId !== groupId
                       ? (e) => handleDragEnter(e, { groupId, issueItemId: 0 })
                       : null
                   }
