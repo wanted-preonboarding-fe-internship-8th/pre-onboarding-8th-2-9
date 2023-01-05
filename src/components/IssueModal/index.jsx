@@ -9,7 +9,7 @@ import Index from '../TextArea';
 export default function IssueModal({ ...props }) {
   const { onClose, managers, issueList, setIssueList, issue } = props;
   const [isShowManagers, setIsShowManagers] = useState(false);
-
+  // refactoring
   const [issueInputValue, setIssueInputValue] = useState({
     id: Date.now(),
     title: issue?.title || '',
