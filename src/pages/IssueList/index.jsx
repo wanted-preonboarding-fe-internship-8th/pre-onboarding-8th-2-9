@@ -7,8 +7,7 @@ import Button from '../../components/Button';
 import IssueCard from '../../components/IssueCard';
 import IssueAddModal from '../../components/IssueModal';
 import Loader from '../../components/Loader';
-import { initialIssueList } from '../../data';
-import { managerList } from '../../temp';
+import { initialIssueList, managerList } from '../../data';
 
 export default function IssueList() {
   const [isModalOpen, setIsModalOpen] = useState(false);
