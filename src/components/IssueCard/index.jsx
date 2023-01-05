@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import IssueModal from '../IssueModal';
 
 export default function IssueCard({ ...props }) {
-  const { issue } = props;
+  const { issue, onModalClose } = props;
   const [isEdit, setIsEdit] = useState(false);
 
   return (
@@ -14,7 +14,9 @@ export default function IssueCard({ ...props }) {
         <p className="manager">{issue?.manager}</p>
         <p className="last-date">{issue?.lastDate}</p>
       </IssueCardContainer>
-      {isEdit && <IssueModal issue={issue} type="EDIT" />}
+      {isEdit && (
+        <IssueModal type="EDIT" issue={issue} onModalClose={onModalClose} />
+      )}
     </>
   );
 }
