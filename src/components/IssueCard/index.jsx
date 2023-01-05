@@ -12,6 +12,8 @@ export default function IssueCard({ ...props }) {
     dragging,
     handleDragStart,
     handleDragEnter,
+    managers,
+    issueList,
   } = props;
 
   const [isEdit, setIsEdit] = useState(false);
@@ -34,7 +36,13 @@ export default function IssueCard({ ...props }) {
         <p className="last-date">{issue?.lastDate}</p>
       </IssueCardContainer>
       {isEdit && (
-        <IssueModal type="EDIT" issue={issue} closeModal={closeModal} />
+        <IssueModal
+          type="EDIT"
+          issue={issue}
+          closeModal={closeModal}
+          managers={managers}
+          issueList={issueList}
+        />
       )}
     </>
   );
