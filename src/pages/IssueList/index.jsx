@@ -134,11 +134,12 @@ export default function IssueList() {
       {isModalOpen && (
         <IssueAddModal
           issueList={issueList}
+          setIssueList={setIssueList}
+          managers={managerList}
           onClose={() => {
             setIsModalOpen(false);
             getIssueList();
           }}
-          managers={managerList}
         />
       )}
       {/* todo: recoil 변경 -> 각 파트에서 예외처리 */}
