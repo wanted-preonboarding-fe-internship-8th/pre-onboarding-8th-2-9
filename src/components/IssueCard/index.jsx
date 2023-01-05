@@ -13,8 +13,9 @@ export default function IssueCard({ ...props }) {
     handleDragStart,
     handleDragEnter,
     managers,
-    issueList,
   } = props;
+
+  const issueList = JSON.parse(localStorage.getItem('issueList'));
 
   const [isEdit, setIsEdit] = useState(false);
 
@@ -42,6 +43,7 @@ export default function IssueCard({ ...props }) {
           closeModal={closeModal}
           managers={managers}
           issueList={issueList}
+          status={issue.status}
         />
       )}
     </>

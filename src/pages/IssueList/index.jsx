@@ -10,12 +10,11 @@ import Loader from '../../components/Loader';
 import { initialIssueList, managerList } from '../../data';
 
 export default function IssueList() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState({ open: false, status: '' });
   const [toast, setToast] = useRecoilState(toastState);
   const [issueList, setIssueList] = useState(initialIssueList);
   const [isLoading, setIsLoading] = useState(true);
   const [dragging, setDragging] = useState(false);
-
   const dragItem = useRef();
   const dragNode = useRef();
 
@@ -61,10 +60,12 @@ export default function IssueList() {
     dragNode.current = null;
   };
 
-  const openModal = () => setIsModalOpen(true);
+  const openModal = (status) => {
+    setIsModalOpen({ open: true, status: status });
+  };
 
   const closeModal = () => {
-    setIsModalOpen(false);
+    setIsModalOpen({ ...isModalOpen, open: false });
     getIssueList();
   };
 
@@ -83,13 +84,6 @@ export default function IssueList() {
       <IssueListContainer>
         <header className="header">
           <h1 className="title">ISSUE</h1>
-          <Button
-            className="add-btn"
-            width="100px"
-            text="+ 추가"
-            background="var(--progress)"
-            onClick={openModal}
-          />
         </header>
         <div className="issue-contents">
           {issueList.map((group, groupId) => {
@@ -103,9 +97,20 @@ export default function IssueList() {
                 //     : null
                 // }
               >
-                <p className={`issue-title ${group?.label}-title`}>
-                  {group?.title}
-                </p>
+                <div className="issue-header">
+                  <p className={`issue-title ${group?.label}-title`}>
+                    {group?.title}
+                  </p>
+                  <Button
+                    className="add-btn"
+                    width="80px"
+                    text="+ 추가"
+                    background=""
+                    margin=""
+                    color="var(--gray-400)"
+                    onClick={() => openModal(group?.label)}
+                  />
+                </div>
                 <ul
                   onDragOver={
                     dragging
@@ -137,10 +142,11 @@ export default function IssueList() {
           })}
         </div>
       </IssueListContainer>
-      {isModalOpen && (
+      {isModalOpen.open && (
         <IssueAddModal
           type="ADD"
           issueList={issueList}
+          status={isModalOpen.status}
           setIssueList={setIssueList}
           managers={managerList}
           closeModal={closeModal}
@@ -159,24 +165,32 @@ const IssueListContainer = styled.div`
       font-size: 24px;
     }
   }
+
   & .issue-contents {
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
+
     & .issue-box {
       width: 260px;
-      & .issue-title {
+      & .issue-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
         margin-bottom: 15px;
-        font-size: 20px;
-      }
-      & .todo-title {
-        color: var(--gray-400);
-      }
-      & .progress-title {
-        color: var(--progress);
-      }
-      & .complete-title {
-        color: var(--complete);
+
+        & .issue-title {
+          font-size: 20px;
+        }
+        & .todo-title {
+          color: var(--gray-400);
+        }
+        & .progress-title {
+          color: var(--progress);
+        }
+        & .complete-title {
+          color: var(--complete);
+        }
       }
     }
   }
