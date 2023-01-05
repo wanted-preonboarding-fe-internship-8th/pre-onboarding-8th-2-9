@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 
 import Button from '../../components/Button';
@@ -8,12 +8,36 @@ import Loader from '../../components/Loader';
 import Toast from '../../components/Toast';
 import { managerList } from '../../temp';
 
+const GROUP_1 = 'To-do';
+const GROUP_2 = 'In Progress';
+const GROUP_3 = 'Complete';
+
+const initialIssueList = [
+  {
+    title: GROUP_1,
+    items: [],
+  },
+  {
+    title: GROUP_2,
+    items: [],
+  },
+  {
+    title: GROUP_3,
+    items: [],
+  },
+];
+
 export default function IssueList() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [issueList, setIssueList] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [issueList, setIssueList] = useState(initialIssueList);
+  const [isLoading, setIsLoading] = useState(false);
+  const [dragging, setDragging] = useState(false);
+
+  const dragItem = useRef();
+  const dragNode = useRef();
 
   const getIssueList = useCallback(() => {
+    setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
     }, 1000);
@@ -22,6 +46,38 @@ export default function IssueList() {
       setIssueList(JSON.parse(localStorage.getItem('issueList')));
     }
   }, []);
+
+  const handleDragStart = (e, params) => {
+    dragItem.current = params;
+    dragNode.current = e.target;
+    dragNode.current.addEventListener('dragend', handleDragEnd);
+    setDragging(true);
+  };
+
+  const handleDragEnter = (e, params) => {
+    const currentItem = dragItem.current;
+    if (e.target !== dragNode.current) {
+      setIssueList((prev) => {
+        let newList = JSON.parse(JSON.stringify(prev)); // deep copy
+        let targetList = newList[params.groupId].items;
+        let selectedList = newList[currentItem.groupId].items;
+        targetList.splice(
+          params.issueItemId,
+          0,
+          selectedList.splice(currentItem.itemI, 1)[0]
+        );
+        dragItem.current = params;
+        return newList;
+      });
+    }
+  };
+
+  const handleDragEnd = () => {
+    setDragging(false);
+    dragNode.current.removeEventListener('dragend', handleDragEnd);
+    dragItem.current = null;
+    dragNode.current = null;
+  };
 
   useEffect(() => {
     getIssueList();
@@ -42,39 +98,37 @@ export default function IssueList() {
           />
         </header>
         <div className="issue-contents">
-          <div className="todo issue-box">
-            <p className="issue-title todo-title">할 일</p>
-            <ul onDragOver={(e) => e.preventDefault()}>
-              {issueList?.map(
-                (issue, idx) =>
-                  issue.status === 'todo' && (
-                    <IssueCard key={idx} issue={issue} />
-                  )
-              )}
-            </ul>
-          </div>
-          <div className="progress issue-box">
-            <p className="issue-title progress-title">진행중</p>
-            <ul onDragOver={(e) => e.preventDefault()}>
-              {issueList?.map(
-                (issue, idx) =>
-                  issue.status === 'progress' && (
-                    <IssueCard key={idx} issue={issue} />
-                  )
-              )}
-            </ul>
-          </div>
-          <div className="complete issue-box">
-            <p className="issue-title complete-title">완료</p>
-            <ul onDragOver={(e) => e.preventDefault()}>
-              {issueList?.map(
-                (issue, idx) =>
-                  issue.status === 'complete' && (
-                    <IssueCard key={idx} issue={issue} />
-                  )
-              )}
-            </ul>
-          </div>
+          {issueList.map((issueGroup, groupId) => {
+            return (
+              <div
+                className="todo issue-box"
+                key={issueGroup.title}
+                onDragEnter={
+                  dragging && !issueGroup.items.length
+                    ? (e) => handleDragEnter(e, { groupId, issueItemId: 0 })
+                    : null
+                }
+              >
+                <p className="issue-title todo-title"> {issueGroup.title} </p>
+                {issueGroup.items?.map((issueItem, issueItemId) => {
+                  return (
+                    <IssueCard
+                      key={`${issueGroup.title}-${issueItemId}`}
+                      title={issueItem.title}
+                      manager={issueItem.manager}
+                      dueDate={issueItem.dueDate}
+                      groupId={groupId}
+                      issueItemId={issueItemId}
+                      dragging={dragging}
+                      handleDragStart={handleDragStart}
+                      handleDragEnter={handleDragEnter}
+                      handleDragEnd={handleDragEnd}
+                    />
+                  );
+                })}
+              </div>
+            );
+          })}
         </div>
       </IssueListContainer>
       {isModalOpen && (
@@ -107,8 +161,10 @@ const IssueListContainer = styled.div`
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
+
     & .issue-box {
       width: 260px;
+
       & .issue-title {
         margin-bottom: 15px;
         font-size: 20px;
@@ -116,9 +172,11 @@ const IssueListContainer = styled.div`
       & .todo-title {
         color: var(--gray-400);
       }
+
       & .progress-title {
         color: var(--progress);
       }
+
       & .complete-title {
         color: var(--complete);
       }

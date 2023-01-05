@@ -4,18 +4,30 @@ import styled from 'styled-components';
 import IssueModal from '../IssueModal';
 
 export default function IssueCard({ ...props }) {
-  const { issue } = props;
-  const [isEdit, setIsEdit] = useState(false);
+  const {
+    title,
+    manager,
+    dueDate,
+    groupId,
+    issueItemId,
+    dragging,
+    handleDragStart,
+    handleDragEnter,
+    handleDragEnd,
+  } = props;
 
   return (
-    <>
-      <IssueCardContainer draggable onClick={() => setIsEdit(true)}>
-        <p className="title">{issue.title}</p>
-        <p className="manager">{issue.manager}</p>
-        <p className="last-date">{issue.lastDate}</p>
-      </IssueCardContainer>
-      {isEdit && <IssueModal issue={issue} />}
-    </>
+    <IssueCardContainer
+      draggable
+      onDragStart={(e) => handleDragStart(e, { groupId, issueItemId })}
+      onDragEnter={
+        dragging ? (e) => handleDragEnter(e, { groupId, issueItemId }) : null
+      }
+    >
+      <p className="title">{title}</p>
+      <p className="manager">{manager}</p>
+      <p className="last-date">{dueDate}</p>
+    </IssueCardContainer>
   );
 }
 

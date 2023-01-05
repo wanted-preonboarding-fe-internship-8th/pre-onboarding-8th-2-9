@@ -6,31 +6,64 @@ import Button from '../Button';
 import Input from '../Input';
 import Index from '../TextArea';
 
+const GROUP_1 = 'To-do';
+const GROUP_2 = 'In Progress';
+const GROUP_3 = 'Complete';
+
+const selectData = [
+  {
+    value: GROUP_1,
+    name: '할 일',
+  },
+  {
+    value: GROUP_2,
+    name: '진행중',
+  },
+  {
+    value: GROUP_3,
+    name: '완료',
+  },
+];
+
 export default function IssueModal({ ...props }) {
   const { onClose, managers, issueList, setIssueList, issue } = props;
   const [isShowManagers, setIsShowManagers] = useState(false);
-  // refactoring
+  const [issues, setIssues] = useState(issueList);
+  const [issueStatus, setIssueStatus] = useState(GROUP_1);
   const [issueInputValue, setIssueInputValue] = useState({
     id: Date.now(),
     title: issue?.title || '',
     manager: issue?.manager || '',
     managerId: 0,
-    description: issue?.description || '',
-    status: issue?.status || 'todo',
-    lastDate: issue?.lastDate || '',
+    description: '',
+    dueDate: '',
   });
 
+  function groupIndex(groupName) {
+    if (groupName === GROUP_1) {
+      return 0;
+    }
+    if (groupName === GROUP_2) {
+      return 1;
+    }
+    if (groupName === GROUP_3) {
+      return 2;
+    }
+  }
+
   const onChangeStatus = (e) => {
-    setIssueInputValue({
-      ...issueInputValue,
-      [e.target.name]: e.target.value,
-    });
+    setIssueStatus(e.target.value);
   };
 
   const onSubmitAddIssue = (e) => {
     e.preventDefault();
     try {
-      setIssueList((prev) => [...prev, issueInputValue]);
+      setIssues((prev) => {
+        let newList = JSON.parse(JSON.stringify(prev)); // deep copy
+        let targetList = newList[groupIndex(issueStatus)];
+        targetList.items.splice(targetList.length, 0, issueInputValue);
+        return newList;
+      });
     } catch (error) {
       console.log(error);
     }
@@ -155,7 +188,12 @@ export default function IssueModal({ ...props }) {
             labelText={ISSUE_FORM_LABEL.DUE_DATE}
             value={issueInputValue.lastDate}
             placeholderText="마감일을 입력해주세요."
-            onChange={onChangeStatus}
+            onChange={(e) =>
+              setIssueInputValue({
+                ...issueInputValue,
+                dueDate: e.target.value,
+              })
+            }
           />
           <Button text="저장" background="var(--progress)" />
         </form>
