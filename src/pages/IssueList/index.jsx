@@ -126,6 +126,8 @@ export default function IssueList() {
                         dragging={dragging}
                         handleDragStart={handleDragStart}
                         handleDragEnter={handleDragEnter}
+                        issueList={issueList}
+                        managers={managerList}
                       />
                     );
                   })}
