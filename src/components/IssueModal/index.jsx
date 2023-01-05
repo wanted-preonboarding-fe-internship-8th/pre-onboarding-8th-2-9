@@ -28,7 +28,6 @@ const selectData = [
 export default function IssueModal({ ...props }) {
   const { onClose, managers, issueList, setIssueList, issue } = props;
   const [isShowManagers, setIsShowManagers] = useState(false);
-  const [issues, setIssues] = useState(issueList);
   const [issueStatus, setIssueStatus] = useState(GROUP_1);
   const [issueInputValue, setIssueInputValue] = useState({
     id: Date.now(),
@@ -58,10 +57,11 @@ export default function IssueModal({ ...props }) {
   const onSubmitAddIssue = (e) => {
     e.preventDefault();
     try {
-      setIssues((prev) => {
+      setIssueList((prev) => {
         let newList = JSON.parse(JSON.stringify(prev)); // deep copy
         let targetList = newList[groupIndex(issueStatus)];
         targetList.items.splice(targetList.length, 0, issueInputValue);
+        console.log(newList);
         return newList;
       });
     } catch (error) {
@@ -94,7 +94,12 @@ export default function IssueModal({ ...props }) {
             labelText={ISSUE_FORM_LABEL.TITLE}
             placeholderText="제목을 입력해주세요."
             value={issueInputValue.title}
-            onChange={onChangeStatus}
+            onChange={(e) =>
+              setIssueInputValue({
+                ...issueInputValue,
+                title: e.currentTarget.value,
+              })
+            }
           />
           <div>
             <Input
@@ -103,7 +108,12 @@ export default function IssueModal({ ...props }) {
               labelText={ISSUE_FORM_LABEL.MANAGER}
               placeholderText="담당자를 입력해주세요."
               value={issueInputValue.manager}
-              onChange={onChangeStatus}
+              onChange={(e) =>
+                setIssueInputValue({
+                  ...issueInputValue,
+                  manager: e.target.value,
+                })
+              }
               onClick={() => setIsShowManagers(true)}
             />
             {isShowManagers && (
@@ -174,7 +184,7 @@ export default function IssueModal({ ...props }) {
             name="status"
             value={issueInputValue.status}
             className="status-select"
-            onChange={onChangeStatus}
+            onChange={(e) => setIssueStatus(e)}
           >
             {Object.values(ISSUE_STATE).map((state) => (
               <option key={state.value} value={state.value}>
