@@ -28,9 +28,6 @@ export default function IssueCard({ ...props }) {
         onClick={openModal}
         draggable
         onDragStart={(e) => handleDragStart(e, { groupId, issueItemId })}
-        onDragEnter={
-          dragging ? (e) => handleDragEnter(e, { groupId, issueItemId }) : null
-        }
       >
         <p className="title">{issue?.title}</p>
         <p className="manager">{issue?.manager}</p>

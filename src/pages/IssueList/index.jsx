@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 
@@ -7,7 +7,6 @@ import Button from '../../components/Button';
 import IssueCard from '../../components/IssueCard';
 import IssueAddModal from '../../components/IssueModal';
 import Loader from '../../components/Loader';
-import Toast from '../../components/Toast';
 import { initialIssueList } from '../../data';
 import { managerList } from '../../temp';
 
@@ -33,7 +32,7 @@ export default function IssueList() {
   const handleDragStart = (e, params) => {
     dragItem.current = params;
     dragNode.current = e.target;
-    dragNode.current.addEventListener('dragend', handleDragEnd);
+    dragNode.current?.addEventListener('dragend', handleDragEnd);
     setDragging(true);
   };
 
@@ -41,23 +40,24 @@ export default function IssueList() {
     const currentItem = dragItem.current;
     if (e.target !== dragNode.current) {
       setIssueList((prev) => {
-        let newList = JSON.parse(JSON.stringify(prev)); // deep copy
-        let targetList = newList[params.groupId]?.items;
-        let selectedList = newList[currentItem.groupId]?.items;
+        const newList = JSON.parse(JSON.stringify(prev)); // deep copy
+        const targetList = newList[params.groupId]?.items;
+        const selectedList = newList[currentItem?.groupId]?.items;
         targetList?.splice(
           params.issueItemId,
           0,
-          selectedList?.splice(currentItem.itemI, 1)[0]
+          selectedList?.splice(currentItem?.issueItemId, 1)[0]
         );
         dragItem.current = params;
         return newList;
       });
+      localStorage.setItem('issueList', JSON.stringify(issueList));
     }
   };
 
   const handleDragEnd = () => {
     setDragging(false);
-    dragNode.current.removeEventListener('dragend', handleDragEnd);
+    dragNode.current?.removeEventListener('dragend', handleDragEnd);
     dragItem.current = null;
     dragNode.current = null;
   };
@@ -78,8 +78,6 @@ export default function IssueList() {
     setTimeout(() => setToast(''), [1500]);
   }, [toast]);
 
-  console.log(toast);
-
   return (
     <>
       {isLoading && <Loader />}
@@ -95,23 +93,40 @@ export default function IssueList() {
           />
         </header>
         <div className="issue-contents">
-          {issueList.map((group) => {
+          {issueList.map((group, groupId) => {
             return (
-              <div className="todo issue-box" key={group?.title}>
+              <div
+                className="todo issue-box"
+                key={group?.title}
+                // onDragEnter={
+                //   dragging && !group.items.length
+                //     ? (e) => handleDragEnter(e, { groupId, issueItemId: 0 })
+                //     : null
+                // }
+              >
                 <p className={`issue-title ${group?.label}-title`}>
                   {group?.title}
                 </p>
-                <ul onDragOver={(e) => e.preventDefault()}>
-                  {group?.items?.map((issue) => {
+                <ul
+                  onDragOver={
+                    dragging
+                      ? (e) => handleDragEnter(e, { groupId, issueItemId: 0 })
+                      : null
+                  }
+                  style={{ height: '100vh' }}
+                >
+                  {group?.items?.map((issue, issueItemId) => {
                     return (
                       <IssueCard
                         key={issue.id}
                         issue={issue}
+                        issueItemId={issueItemId}
                         getIssueList={getIssueList}
                         group={group}
+                        groupId={groupId}
+                        dragging={dragging}
                         handleDragStart={handleDragStart}
                         handleDragEnter={handleDragEnter}
-                        dragging={dragging}
                       />
                     );
                   })}
@@ -130,7 +145,6 @@ export default function IssueList() {
           closeModal={closeModal}
         />
       )}
-      {toast && <Toast status={toast.status} message={toast.message} />}
     </>
   );
 }
