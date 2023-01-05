@@ -98,7 +98,6 @@ export default function IssueList() {
                 className="todo issue-box"
                 key={group?.title}
                 onDragEnter={
-                  // dragging && !group.items.length
                   dragging &&
                   dragItem.current.groupId !== groupId &&
                   !group.items.length
@@ -122,7 +121,6 @@ export default function IssueList() {
                   {group?.items?.map((issue, issueItemId) => {
                     return (
                       <IssueCard
-                        // key={`${groupId}-${issueItemId}`}
                         key={issue.id}
                         issue={issue}
                         issueItemId={issueItemId}
