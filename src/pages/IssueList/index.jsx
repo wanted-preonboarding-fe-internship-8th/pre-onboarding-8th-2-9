@@ -11,10 +11,9 @@ import { managerList } from '../../temp';
 export default function IssueList() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [issueList, setIssueList] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const getIssueList = useCallback(() => {
-    setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
     }, 1000);
@@ -27,8 +26,6 @@ export default function IssueList() {
   useEffect(() => {
     getIssueList();
   }, [getIssueList]);
-
-  console.log(issueList);
 
   return (
     <>
@@ -51,12 +48,7 @@ export default function IssueList() {
               {issueList?.map(
                 (issue, idx) =>
                   issue.status === 'todo' && (
-                    <IssueCard
-                      key={idx}
-                      title={issue.title}
-                      manager={issue.manager}
-                      lastDate={issue.lastDate}
-                    />
+                    <IssueCard key={idx} issue={issue} />
                   )
               )}
             </ul>
@@ -98,11 +90,12 @@ export default function IssueList() {
       {isModalOpen && (
         <IssueAddModal
           issueList={issueList}
+          setIssueList={setIssueList}
+          managers={managerList}
           onClose={() => {
             setIsModalOpen(false);
             getIssueList();
           }}
-          managers={managerList}
         />
       )}
       {/* todo: recoil 변경 -> 각 파트에서 예외처리 */}
@@ -124,10 +117,8 @@ const IssueListContainer = styled.div`
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
-
     & .issue-box {
       width: 260px;
-
       & .issue-title {
         margin-bottom: 15px;
         font-size: 20px;
@@ -135,11 +126,9 @@ const IssueListContainer = styled.div`
       & .todo-title {
         color: var(--gray-400);
       }
-
       & .progress-title {
         color: var(--progress);
       }
-
       & .complete-title {
         color: var(--complete);
       }
