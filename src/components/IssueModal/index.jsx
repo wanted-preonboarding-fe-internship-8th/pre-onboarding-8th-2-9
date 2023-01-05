@@ -53,6 +53,7 @@ export default function IssueModal({ ...props }) {
     );
     issueList[groupIndex].items[issueIndex] = issueInputValue;
     localStorage.setItem('issueList', JSON.stringify(issueList));
+    setToast({ status: 'success', message: '성공적으로 수정되었습니다.' });
     closeModal();
   };
 
