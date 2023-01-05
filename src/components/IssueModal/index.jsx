@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { ISSUE_FORM_LABEL, ISSUE_STATE } from '../../enums';
@@ -7,9 +7,13 @@ import Input from '../Input';
 import Index from '../TextArea';
 
 export default function IssueModal({ ...props }) {
-  const { onClose, managers, issueList, setIssueList, issue } = props;
+  //type: edit or add indicator
+  const { type, onClose, managers, issueList, issue } = props;
   const [isShowManagers, setIsShowManagers] = useState(false);
   // refactoring
+
+  console.log(issue);
+
   const [issueInputValue, setIssueInputValue] = useState({
     id: Date.now(),
     title: issue?.title || '',
@@ -27,18 +31,15 @@ export default function IssueModal({ ...props }) {
     });
   };
 
-  const onSubmitAddIssue = (e) => {
-    e.preventDefault();
-    try {
-      setIssueList((prev) => [...prev, issueInputValue]);
-    } catch (error) {
-      console.log(error);
-    }
+  //add issue
+  const onSubmitAddIssue = async () => {
+    const newIssutList = [...issueList, issueInputValue];
+    localStorage.setItem('issueList', JSON.stringify(newIssutList));
+    onClose();
   };
-
-  useEffect(() => {
-    localStorage.setItem('issueList', JSON.stringify(issueList));
-  }, [onSubmitAddIssue]);
+  //todo: edit
+  //edit issue
+  const onSubmitEditIssue = () => {};
 
   return (
     <>
@@ -55,110 +56,114 @@ export default function IssueModal({ ...props }) {
           />
         </div>
 
-        <form onSubmit={onSubmitAddIssue}>
+        <Input
+          name="title"
+          labelText={ISSUE_FORM_LABEL.TITLE}
+          placeholderText="제목을 입력해주세요."
+          value={issueInputValue.title}
+          onChange={onChangeStatus}
+        />
+        <div>
           <Input
-            name="title"
-            labelText={ISSUE_FORM_LABEL.TITLE}
-            placeholderText="제목을 입력해주세요."
-            value={issueInputValue.title}
+            name="manager"
+            margin="0"
+            labelText={ISSUE_FORM_LABEL.MANAGER}
+            placeholderText="담당자를 입력해주세요."
+            value={issueInputValue.manager}
             onChange={onChangeStatus}
+            onClick={() => setIsShowManagers(true)}
           />
-          <div>
-            <Input
-              name="manager"
-              margin="0"
-              labelText={ISSUE_FORM_LABEL.MANAGER}
-              placeholderText="담당자를 입력해주세요."
-              value={issueInputValue.manager}
-              onChange={onChangeStatus}
-              onClick={() => setIsShowManagers(true)}
-            />
-            {isShowManagers && (
-              <ul className="manager-list">
-                {issueInputValue.manager &&
-                  managers?.map(
-                    (manager, idx) =>
-                      manager.name.includes(issueInputValue.manager) &&
-                      manager.name !== issueInputValue.manager && (
-                        <li
-                          key={idx}
-                          className="manager cursor-pointer"
-                          onClick={() =>
-                            setIssueInputValue({
-                              ...issueInputValue,
-                              manager: manager.name,
-                            })
-                          }
-                        >
-                          <p
-                            className="chip"
-                            style={{
-                              background: `var(--manager-${manager.id})`,
-                            }}
-                          >
-                            {manager.name}
-                          </p>
-                        </li>
-                      )
-                  )}
-                {!issueInputValue.manager &&
-                  managers?.map((manager, idx) => (
-                    <li
-                      key={manager.id}
-                      className="manager cursor-pointer"
-                      onClick={() =>
-                        setIssueInputValue({
-                          ...issueInputValue,
-                          manager: manager.name,
-                        })
-                      }
-                    >
-                      <p
-                        className="chip"
-                        style={{ background: `var(--manager-${manager.id})` }}
+          {isShowManagers && (
+            <ul className="manager-list">
+              {issueInputValue.manager &&
+                managers?.map(
+                  (manager, idx) =>
+                    manager.name.includes(issueInputValue.manager) &&
+                    manager.name !== issueInputValue.manager && (
+                      <li
+                        key={idx}
+                        className="manager cursor-pointer"
+                        onClick={() =>
+                          setIssueInputValue({
+                            ...issueInputValue,
+                            manager: manager.name,
+                          })
+                        }
                       >
-                        {manager.name}
-                      </p>
-                    </li>
-                  ))}
-              </ul>
-            )}
-          </div>
-          <Index
-            name="description"
-            labelText={ISSUE_FORM_LABEL.CONTENT}
-            placeholderText="내용을 입력해주세요."
-            value={issueInputValue.description}
-            onChange={(e) =>
-              setIssueInputValue({
-                ...issueInputValue,
-                description: e.currentTarget.value,
-              })
-            }
-          />
-          <p className="title">상태</p>
-          <select
-            name="status"
-            value={issueInputValue.status}
-            className="status-select"
-            onChange={onChangeStatus}
-          >
-            {Object.values(ISSUE_STATE).map((state) => (
-              <option key={state.value} value={state.value}>
-                {state.label}
-              </option>
-            ))}
-          </select>
-          <Input
-            type="datetime-local"
-            name="lastDate"
-            labelText={ISSUE_FORM_LABEL.DUE_DATE}
-            value={issueInputValue.lastDate}
-            placeholderText="마감일을 입력해주세요."
-            onChange={onChangeStatus}
-          />
-          <Button text="저장" background="var(--progress)" />
-        </form>
+                        <p
+                          className="chip"
+                          style={{
+                            background: `var(--manager-${manager.id})`,
+                          }}
+                        >
+                          {manager.name}
+                        </p>
+                      </li>
+                    )
+                )}
+              {!issueInputValue.manager &&
+                managers?.map((manager, idx) => (
+                  <li
+                    key={manager.id}
+                    className="manager cursor-pointer"
+                    onClick={() =>
+                      setIssueInputValue({
+                        ...issueInputValue,
+                        manager: manager.name,
+                      })
+                    }
+                  >
+                    <p
+                      className="chip"
+                      style={{ background: `var(--manager-${manager.id})` }}
+                    >
+                      {manager.name}
+                    </p>
+                  </li>
+                ))}
+            </ul>
+          )}
+        </div>
+        <Index
+          name="description"
+          labelText={ISSUE_FORM_LABEL.CONTENT}
+          placeholderText="내용을 입력해주세요."
+          value={issueInputValue.description}
+          onChange={(e) =>
+            setIssueInputValue({
+              ...issueInputValue,
+              description: e.currentTarget.value,
+            })
+          }
+        />
+        <p className="title">상태</p>
+        <select
+          name="status"
+          value={issueInputValue.status}
+          className="status-select"
+          onChange={onChangeStatus}
+        >
+          {Object.values(ISSUE_STATE).map((state) => (
+            <option key={state.value} value={state.value}>
+              {state.label}
+            </option>
+          ))}
+        </select>
+        <Input
+          type="datetime-local"
+          name="lastDate"
+          labelText={ISSUE_FORM_LABEL.DUE_DATE}
+          value={issueInputValue.lastDate}
+          placeholderText="마감일을 입력해주세요."
+          onChange={onChangeStatus}
+        />
+        <Button
+          text="저장"
+          background="var(--progress)"
+          onClick={() =>
+            type === 'ADD' ? onSubmitAddIssue() : onSubmitEditIssue()
+          }
+        />
       </IssueAddModalContainer>
       <Overlay onClick={() => onClose()} />
     </>

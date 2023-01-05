@@ -10,11 +10,11 @@ export default function IssueCard({ ...props }) {
   return (
     <>
       <IssueCardContainer draggable onClick={() => setIsEdit(true)}>
-        <p className="title">{issue.title}</p>
-        <p className="manager">{issue.manager}</p>
-        <p className="last-date">{issue.lastDate}</p>
+        <p className="title">{issue?.title}</p>
+        <p className="manager">{issue?.manager}</p>
+        <p className="last-date">{issue?.lastDate}</p>
       </IssueCardContainer>
-      {isEdit && <IssueModal issue={issue} />}
+      {isEdit && <IssueModal issue={issue} type="EDIT" />}
     </>
   );
 }

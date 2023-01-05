@@ -13,18 +13,20 @@ export default function IssueList() {
   const [issueList, setIssueList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const getIssueList = useCallback(() => {
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-    //todo: sort
-    if (localStorage.getItem('issueList')) {
-      setIssueList(JSON.parse(localStorage.getItem('issueList')));
+  const getIssueList = useCallback(async () => {
+    if (!localStorage.getItem('issueList')) {
+      return;
     }
+    setIssueList(JSON.parse(localStorage.getItem('issueList')));
+    //todo: sort
+    //todo: add 시, loading 풀림
   }, []);
 
   useEffect(() => {
-    getIssueList();
+    setTimeout(() => {
+      getIssueList();
+      setIsLoading(false);
+    }, 2000);
   }, [getIssueList]);
 
   return (
@@ -77,8 +79,10 @@ export default function IssueList() {
           </div>
         </div>
       </IssueListContainer>
+
       {isModalOpen && (
         <IssueAddModal
+          type="ADD"
           issueList={issueList}
           setIssueList={setIssueList}
           managers={managerList}
