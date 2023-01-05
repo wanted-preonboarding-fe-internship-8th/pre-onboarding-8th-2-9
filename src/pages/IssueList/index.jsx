@@ -59,12 +59,7 @@ export default function IssueList() {
               {issueList?.map(
                 (issue, idx) =>
                   issue.status === 'progress' && (
-                    <IssueCard
-                      key={idx}
-                      title={issue.title}
-                      manager={issue.manager}
-                      lastDate={issue.lastDate}
-                    />
+                    <IssueCard key={idx} issue={issue} />
                   )
               )}
             </ul>
@@ -75,12 +70,7 @@ export default function IssueList() {
               {issueList?.map(
                 (issue, idx) =>
                   issue.status === 'complete' && (
-                    <IssueCard
-                      key={idx}
-                      title={issue.title}
-                      manager={issue.manager}
-                      lastDate={issue.lastDate}
-                    />
+                    <IssueCard key={idx} issue={issue} />
                   )
               )}
             </ul>
