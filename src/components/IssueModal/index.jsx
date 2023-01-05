@@ -30,7 +30,7 @@ export default function IssueModal({ ...props }) {
     });
   };
 
-  const onSubmitAddIssue = async () => {
+  const onSubmitAddIssue = () => {
     const groupIndex = issueList.findIndex(
       (group) => group.label === issueInputValue.status
     );
