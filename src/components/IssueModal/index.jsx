@@ -23,7 +23,7 @@ export default function IssueModal({ ...props }) {
   const onChangeStatus = (e) => {
     setIssueInputValue({
       ...issueInputValue,
-      status: e.target.value,
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -61,9 +61,7 @@ export default function IssueModal({ ...props }) {
             labelText={ISSUE_FORM_LABEL.TITLE}
             placeholderText="제목을 입력해주세요."
             value={issueInputValue.title}
-            onChange={(e) =>
-              setIssueInputValue({ ...issueInputValue, title: e.target.value })
-            }
+            onChange={onChangeStatus}
           />
           <div>
             <Input
@@ -72,12 +70,7 @@ export default function IssueModal({ ...props }) {
               labelText={ISSUE_FORM_LABEL.MANAGER}
               placeholderText="담당자를 입력해주세요."
               value={issueInputValue.manager}
-              onChange={(e) =>
-                setIssueInputValue({
-                  ...issueInputValue,
-                  manager: e.target.value,
-                })
-              }
+              onChange={onChangeStatus}
               onClick={() => setIsShowManagers(true)}
             />
             {isShowManagers && (
@@ -145,9 +138,10 @@ export default function IssueModal({ ...props }) {
           />
           <p className="title">상태</p>
           <select
-            className="status-select"
+            name="status"
             value={issueInputValue.status}
-            onChange={(e) => onChangeStatus(e)}
+            className="status-select"
+            onChange={onChangeStatus}
           >
             {Object.values(ISSUE_STATE).map((state) => (
               <option key={state.value} value={state.value}>
@@ -157,16 +151,11 @@ export default function IssueModal({ ...props }) {
           </select>
           <Input
             type="datetime-local"
-            name="date"
+            name="lastDate"
             labelText={ISSUE_FORM_LABEL.DUE_DATE}
-            placeholderText="마감일을 입력해주세요."
             value={issueInputValue.lastDate}
-            onChange={(e) =>
-              setIssueInputValue({
-                ...issueInputValue,
-                lastDate: e.target.value,
-              })
-            }
+            placeholderText="마감일을 입력해주세요."
+            onChange={onChangeStatus}
           />
           <Button text="저장" background="var(--progress)" />
         </form>
