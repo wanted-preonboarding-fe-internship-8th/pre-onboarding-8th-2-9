@@ -15,7 +15,15 @@ const GROUP_3 = 'Complete';
 const initialIssueList = [
   {
     title: GROUP_1,
-    items: [],
+    items: [
+      {
+        title: 'hey',
+        manager: '김다희',
+        dueDate: new Date().getDate(),
+        groupId: 0,
+        issueItemId: new Date().getDate(),
+      },
+    ],
   },
   {
     title: GROUP_2,
@@ -104,7 +112,7 @@ export default function IssueList() {
                 className="todo issue-box"
                 key={issueGroup.title}
                 onDragEnter={
-                  dragging && !issueGroup.items.length
+                  dragging && !issueGroup?.items.length
                     ? (e) => handleDragEnter(e, { groupId, issueItemId: 0 })
                     : null
                 }
