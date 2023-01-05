@@ -41,17 +41,18 @@ export default function IssueList() {
     const currentItem = dragItem.current;
     if (e.target !== dragNode.current) {
       setIssueList((prev) => {
-        let newList = JSON.parse(JSON.stringify(prev)); // deep copy
-        let targetList = newList[params.groupId]?.items;
-        let selectedList = newList[currentItem.groupId]?.items;
+        const newList = JSON.parse(JSON.stringify(prev)); // deep copy
+        const targetList = newList[params.groupId]?.items;
+        const selectedList = newList[currentItem?.groupId]?.items;
         targetList?.splice(
           params.issueItemId,
           0,
-          selectedList?.splice(currentItem.itemI, 1)[0]
+          selectedList?.splice(currentItem?.issueItemId, 1)[0]
         );
         dragItem.current = params;
         return newList;
       });
+      localStorage.setItem('issueList', JSON.stringify(issueList));
     }
   };
 
@@ -93,27 +94,35 @@ export default function IssueList() {
           />
         </header>
         <div className="issue-contents">
-          {issueList.map((group) => {
+          {issueList.map((group, groupId) => {
             return (
-              <div className="todo issue-box" key={group?.title}>
+              <div
+                className="todo issue-box"
+                key={group?.title}
+                onDragEnter={
+                  dragging && !group.items.length
+                    ? (e) => handleDragEnter(e, { groupId, issueItemId: 0 })
+                    : null
+                }
+              >
                 <p className={`issue-title ${group?.label}-title`}>
                   {group?.title}
                 </p>
-                <ul onDragOver={(e) => e.preventDefault()}>
-                  {group?.items?.map((issue) => {
-                    return (
-                      <IssueCard
-                        key={issue.id}
-                        issue={issue}
-                        getIssueList={getIssueList}
-                        group={group}
-                        handleDragStart={handleDragStart}
-                        handleDragEnter={handleDragEnter}
-                        dragging={dragging}
-                      />
-                    );
-                  })}
-                </ul>
+                {group?.items?.map((issue, issueId) => {
+                  return (
+                    <IssueCard
+                      key={issue.id}
+                      issue={issue}
+                      getIssueList={getIssueList}
+                      group={group}
+                      groupId={groupId}
+                      dragging={dragging}
+                      handleDragStart={handleDragStart}
+                      handleDragEnter={handleDragEnter}
+                      handleDragEnd={handleDragEnd}
+                    />
+                  );
+                })}
               </div>
             );
           })}

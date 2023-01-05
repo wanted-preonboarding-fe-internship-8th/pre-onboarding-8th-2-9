@@ -12,6 +12,7 @@ export default function IssueCard({ ...props }) {
     dragging,
     handleDragStart,
     handleDragEnter,
+    handleDragEnd,
   } = props;
 
   const [isEdit, setIsEdit] = useState(false);
