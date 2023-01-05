@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import { toastState } from '../../atom/toast/state';
 import { ISSUE_FORM_LABEL, ISSUE_STATE } from '../../enums';
+import useInput from '../../hooks/useInput';
 import Button from '../Button';
 import Input from '../Input';
 import Index from '../TextArea';
@@ -13,7 +14,7 @@ export default function IssueModal({ ...props }) {
   const [toast, setToast] = useRecoilState(toastState);
   const [isShowManagers, setIsShowManagers] = useState(false);
   const [issueStatus, setIssueStatus] = useState(issue?.state);
-  const [issueInputValue, setIssueInputValue] = useState({
+  const [issueInputValue, setIssueInputValue] = useInput({
     id: issue?.id || Date.now(),
     title: issue?.title || '',
     manager: issue?.manager || '',
@@ -57,34 +58,6 @@ export default function IssueModal({ ...props }) {
     closeModal();
   };
 
-  const handleTitleInput = (e) => {
-    setIssueInputValue({
-      ...issueInputValue,
-      title: e.currentTarget.value,
-    });
-  };
-
-  const handleManagerInput = (e) => {
-    setIssueInputValue({
-      ...issueInputValue,
-      manager: e.currentTarget.value,
-    });
-  };
-
-  const handleDescriptionInput = (e) => {
-    setIssueInputValue({
-      ...issueInputValue,
-      description: e.currentTarget.value,
-    });
-  };
-
-  const handleLastDateInput = (e) => {
-    setIssueInputValue({
-      ...issueInputValue,
-      lastDate: e.currentTarget.value,
-    });
-  };
-
   return (
     <>
       <IssueAddModalContainer>
@@ -104,7 +77,7 @@ export default function IssueModal({ ...props }) {
           labelText={ISSUE_FORM_LABEL.TITLE}
           placeholderText="제목을 입력해주세요."
           value={issueInputValue.title}
-          onChange={(e) => handleTitleInput(e)}
+          onChange={setIssueInputValue}
         />
         <div>
           <Input
@@ -113,7 +86,7 @@ export default function IssueModal({ ...props }) {
             labelText={ISSUE_FORM_LABEL.MANAGER}
             placeholderText="담당자를 입력해주세요."
             value={issueInputValue.manager}
-            onChange={(e) => handleManagerInput(e)}
+            onChange={setIssueInputValue}
             onClick={() => setIsShowManagers(true)}
           />
           {isShowManagers && (
@@ -149,12 +122,7 @@ export default function IssueModal({ ...props }) {
                   <li
                     key={manager.id}
                     className="manager cursor-pointer"
-                    onClick={() =>
-                      setIssueInputValue({
-                        ...issueInputValue,
-                        manager: manager.name,
-                      })
-                    }
+                    onClick={setIssueInputValue}
                   >
                     <p
                       className="chip"
@@ -172,7 +140,7 @@ export default function IssueModal({ ...props }) {
           labelText={ISSUE_FORM_LABEL.CONTENT}
           placeholderText="내용을 입력해주세요."
           value={issueInputValue.description}
-          onChange={(e) => handleDescriptionInput(e)}
+          onChange={setIssueInputValue}
         />
         <p className="title">상태</p>
         <select
@@ -193,7 +161,7 @@ export default function IssueModal({ ...props }) {
           labelText={ISSUE_FORM_LABEL.DUE_DATE}
           value={issueInputValue.lastDate}
           placeholderText="마감일을 입력해주세요."
-          onChange={(e) => handleLastDateInput(e)}
+          onChange={setIssueInputValue}
         />
         <Button
           text="저장"
