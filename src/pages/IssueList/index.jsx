@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState, useRef } from 'react';
+import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 
+import { toastState } from '../../atom/toast/state';
 import Button from '../../components/Button';
 import IssueCard from '../../components/IssueCard';
 import IssueAddModal from '../../components/IssueModal';
@@ -11,6 +13,7 @@ import { managerList } from '../../temp';
 
 export default function IssueList() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [toast, setToast] = useRecoilState(toastState);
   const [issueList, setIssueList] = useState(initialIssueList);
   const [isLoading, setIsLoading] = useState(true);
   const [dragging, setDragging] = useState(false);
@@ -70,6 +73,13 @@ export default function IssueList() {
     getIssueList();
   }, []);
 
+  useEffect(() => {
+    if (!toast) return;
+    setTimeout(() => setToast(''), [1500]);
+  }, [toast]);
+
+  console.log(toast);
+
   return (
     <>
       {isLoading && <Loader />}
@@ -120,7 +130,7 @@ export default function IssueList() {
           closeModal={closeModal}
         />
       )}
-      {/*<Toast status="error" message="등록에 실패했습니다." />*/}
+      {toast && <Toast status={toast.status} message={toast.message} />}
     </>
   );
 }
