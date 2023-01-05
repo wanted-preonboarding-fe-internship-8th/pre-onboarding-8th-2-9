@@ -97,18 +97,23 @@ export default function IssueList() {
               <div
                 className="todo issue-box"
                 key={group?.title}
-                // onDragEnter={
-                //   dragging && !group.items.length
-                //     ? (e) => handleDragEnter(e, { groupId, issueItemId: 0 })
-                //     : null
-                // }
+                onDragEnter={
+                  // dragging && !group.items.length
+                  dragging &&
+                  dragItem.current.groupId !== groupId &&
+                  !group.items.length
+                    ? (e) => handleDragEnter(e, { groupId, issueItemId: 0 })
+                    : null
+                }
               >
                 <p className={`issue-title ${group?.label}-title`}>
                   {group?.title}
                 </p>
                 <ul
-                  onDragOver={
-                    dragging
+                  onDragEnter={
+                    dragging &&
+                    dragItem.current.groupId !== groupId &&
+                    group.items.length
                       ? (e) => handleDragEnter(e, { groupId, issueItemId: 0 })
                       : null
                   }
@@ -117,6 +122,7 @@ export default function IssueList() {
                   {group?.items?.map((issue, issueItemId) => {
                     return (
                       <IssueCard
+                        // key={`${groupId}-${issueItemId}`}
                         key={issue.id}
                         issue={issue}
                         issueItemId={issueItemId}
@@ -128,6 +134,7 @@ export default function IssueList() {
                         handleDragEnter={handleDragEnter}
                         issueList={issueList}
                         managers={managerList}
+                        dragItem={dragItem}
                       />
                     );
                   })}
