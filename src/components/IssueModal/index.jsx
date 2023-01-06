@@ -13,7 +13,7 @@ export default function IssueModal({ ...props }) {
   const { type, issueList, closeModal, status, managers, issue } = props;
   const [toast, setToast] = useRecoilState(toastState);
   const [searchInput, setSearchInput] = useState('');
-  const [searchedManagers, setSearchedManagers] = useState([]);
+  const [searchedManagers, setSearchedManagers] = useState(managers);
   const [issueInputValue, setIssueInputValue] = useInput({
     id: issue?.id || Date.now(),
     title: issue?.title || '',
@@ -60,7 +60,7 @@ export default function IssueModal({ ...props }) {
   const searchManagers = (e) => {
     setSearchInput(e.target.value);
     if (e.target.value === '') {
-      setSearchedManagers([]);
+      setSearchedManagers(managers);
       return;
     }
     const searchedManagers = managers.filter((manager) =>
@@ -172,6 +172,8 @@ const IssueAddModalContainer = styled.div`
   }
 
   & .manager-list {
+    display: flex;
+    flex-direction: row;
     text-align: left;
     & .manager {
       & .chip {
