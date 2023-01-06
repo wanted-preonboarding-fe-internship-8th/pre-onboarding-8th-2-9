@@ -22,7 +22,7 @@ export default function IssueList() {
   const getIssueList = () => {
     setTimeout(() => {
       setIsLoading(false);
-    }, 1000);
+    }, 500);
     if (localStorage.getItem('issueList')) {
       setIssueList(JSON.parse(localStorage.getItem('issueList')));
     }
@@ -87,7 +87,7 @@ export default function IssueList() {
           <h1 className="title">ISSUE</h1>
         </header>
         <div className="issue-contents">
-          {issueList.map((group, groupId) => {
+          {issueList?.map((group, groupId) => {
             return (
               <div className="todo issue-box" key={group?.title}>
                 <div className="issue-header">

@@ -30,8 +30,44 @@ export default function IssueModal({ ...props }) {
     description: issue?.description || '',
     status: status,
     lastDate: issue?.lastDate || '',
-    order: issueList[STATUS_INDEX].items.length + 1,
   });
+
+  const searchManagers = (e) => {
+    setSearchInput(e.target.value);
+    if (e.target.value === '') {
+      setSearchedManagers(managers);
+      return;
+    }
+    const searchedManagers = managers.filter((manager) =>
+      manager.name.includes(e.target.value)
+    );
+    setSearchedManagers(searchedManagers);
+  };
+
+  const clickManagerChip = (manager, e) => {
+    setSearchInput(manager.name);
+  };
+
+  const onDeleteIssue = () => {
+    console.log(1);
+    try {
+      const newList = issueList[STATUS_INDEX].items.filter(
+        (item) => item.id !== issueInputValue.id
+      );
+      issueList[STATUS_INDEX].items = newList;
+      localStorage.setItem('issueList', JSON.stringify(issueList));
+      setToast({
+        status: 'success',
+        message: '삭제되었습니다.',
+      });
+      closeModal();
+    } catch {
+      setToast({
+        status: 'error',
+        message: '잠시 후 다시 시도해주세요.',
+      });
+    }
+  };
 
   const onSubmitHandleIssue = () => {
     const issueIndex = issueList[STATUS_INDEX].items?.findIndex(
@@ -60,22 +96,6 @@ export default function IssueModal({ ...props }) {
       });
       closeModal();
     }
-  };
-
-  const searchManagers = (e) => {
-    setSearchInput(e.target.value);
-    if (e.target.value === '') {
-      setSearchedManagers(managers);
-      return;
-    }
-    const searchedManagers = managers.filter((manager) =>
-      manager.name.includes(e.target.value)
-    );
-    setSearchedManagers(searchedManagers);
-  };
-
-  const clickManagerChip = (manager, e) => {
-    setSearchInput(manager.name);
   };
 
   return (
@@ -149,11 +169,22 @@ export default function IssueModal({ ...props }) {
           placeholderText={ISSUE_FORM_PLACEHOLDER.LAST_DATE}
           onChange={setIssueInputValue}
         />
-        <Button
-          text="저장"
-          background="var(--progress)"
-          onClick={onSubmitHandleIssue}
-        />
+        <div className="issue-btn-handler">
+          <Button
+            text="삭제"
+            background="var(--error)"
+            margin="0 20px 0 0"
+            height="50px"
+            onClick={onDeleteIssue}
+          />
+          <Button
+            text="저장"
+            margin=""
+            height="50px"
+            background="var(--progress)"
+            onClick={onSubmitHandleIssue}
+          />
+        </div>
       </IssueAddModalContainer>
       <Overlay onClick={closeModal} />
     </>
@@ -217,6 +248,10 @@ const IssueAddModalContainer = styled.div`
     line-height: 1.5;
     text-overflow: ellipsis;
     font-size: 16px;
+  }
+  & .issue-btn-handler {
+    display: flex;
+    height: 48px;
   }
 `;
 
