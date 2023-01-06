@@ -59,7 +59,7 @@ export default function IssueModal({ ...props }) {
   const searchManagers = (e) => {
     setSearchInput(e.target.value);
     if (e.target.value === '') {
-      setSearchedManagers([]);
+      setSearchedManagers(managers);
       return;
     }
     const searchedManagers = managers.filter((manager) =>
@@ -171,6 +171,8 @@ const IssueAddModalContainer = styled.div`
   }
 
   & .manager-list {
+    display: flex;
+    flex-direction: row;
     text-align: left;
     & .manager {
       & .chip {
