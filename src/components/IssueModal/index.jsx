@@ -24,7 +24,6 @@ export default function IssueModal({ ...props }) {
     lastDate: issue?.lastDate || '',
   });
 
-  console.log(issue);
   const onSubmitHandleIssue = () => {
     const groupIndex = issueList.findIndex(
       (group) => group.label === issueInputValue.status

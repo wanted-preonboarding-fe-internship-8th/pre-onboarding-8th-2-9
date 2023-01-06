@@ -15,6 +15,7 @@ export default function IssueList() {
   const [issueList, setIssueList] = useState(initialIssueList);
   const [isLoading, setIsLoading] = useState(true);
   const [dragging, setDragging] = useState(false);
+
   const dragItem = useRef();
   const dragNode = useRef();
 
@@ -88,15 +89,7 @@ export default function IssueList() {
         <div className="issue-contents">
           {issueList.map((group, groupId) => {
             return (
-              <div
-                className="todo issue-box"
-                key={group?.title}
-                // onDragEnter={
-                //   dragging && !group.items.length
-                //     ? (e) => handleDragEnter(e, { groupId, issueItemId: 0 })
-                //     : null
-                // }
-              >
+              <div className="todo issue-box" key={group?.title}>
                 <div className="issue-header">
                   <p className={`issue-title ${group?.label}-title`}>
                     {group?.title}
@@ -113,12 +106,10 @@ export default function IssueList() {
                 </div>
                 <ul
                   onDragEnter={
-                    dragging && dragItem.current.groupId !== groupId
-                      ? (e) =>
-                          handleDragEnter(e, {
-                            groupId,
-                            issueItemId: issueList[groupId].items.length,
-                          })
+                    dragging &&
+                    dragItem.current.groupId !== groupId &&
+                    group.items.length
+                      ? (e) => handleDragEnter(e, { groupId, issueItemId: 0 })
                       : null
                   }
                   style={{ height: '100vh' }}
