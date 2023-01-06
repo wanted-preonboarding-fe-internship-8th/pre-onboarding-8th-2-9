@@ -13,6 +13,7 @@ export default function IssueCard({ ...props }) {
     handleDragStart,
     handleDragEnter,
     managers,
+    dragItem,
   } = props;
 
   const issueList = JSON.parse(localStorage.getItem('issueList'));
@@ -31,6 +32,11 @@ export default function IssueCard({ ...props }) {
         onClick={openModal}
         draggable
         onDragStart={(e) => handleDragStart(e, { groupId, issueItemId })}
+        onDragEnter={
+          dragging && dragItem.current.groupId === groupId
+            ? (e) => handleDragEnter(e, { groupId, issueItemId })
+            : null
+        }
       >
         <p className="title">{issue?.title}</p>
         <p className="manager">{issue?.manager}</p>
