@@ -3,7 +3,13 @@ import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import { toastState } from '../../atom/toast/state';
-import { ISSUE_FORM_LABEL } from '../../enums';
+import {
+  ISSUE_FORM_LABEL,
+  ISSUE_FORM_NAME,
+  ISSUE_FORM_PLACEHOLDER,
+  ISSUE_MODAL_TITLE,
+  ISSUE_STATE,
+} from '../../enums';
 import useInput from '../../hooks/useInput';
 import Button from '../Button';
 import Input from '../Input';
@@ -96,7 +102,10 @@ export default function IssueModal({ ...props }) {
     <>
       <IssueAddModalContainer>
         <div className="header">
-          <h2>ISSUE {type === 'EDIT' ? '수정' : '등록'}</h2>
+          <h2>
+            ISSUE{' '}
+            {type === 'EDIT' ? ISSUE_MODAL_TITLE.EDIT : ISSUE_MODAL_TITLE.ADD}
+          </h2>
           <Button
             background=""
             text="X"
@@ -107,18 +116,18 @@ export default function IssueModal({ ...props }) {
           />
         </div>
         <Input
-          name="title"
+          name={ISSUE_FORM_NAME.TITLE}
           labelText={ISSUE_FORM_LABEL.TITLE}
-          placeholderText="제목을 입력해주세요."
+          placeholderText={ISSUE_FORM_PLACEHOLDER.TITLE}
           value={issueInputValue.title}
           onChange={setIssueInputValue}
         />
         <div>
           <Input
-            name="manager"
+            name={ISSUE_FORM_NAME.MANAGER}
             margin="0"
             labelText={ISSUE_FORM_LABEL.MANAGER}
-            placeholderText="담당자를 입력해주세요."
+            placeholderText={ISSUE_FORM_PLACEHOLDER.MANAGER}
             value={searchInput}
             onChange={searchManagers}
           />
@@ -126,7 +135,7 @@ export default function IssueModal({ ...props }) {
             {searchedManagers.map((manager) => {
               return (
                 <li
-                  data-name="manager"
+                  data-name={ISSUE_FORM_NAME.MANAGER}
                   key={manager.id}
                   className="manager cursor-pointer"
                 >
@@ -146,18 +155,18 @@ export default function IssueModal({ ...props }) {
           </ul>
         </div>
         <Index
-          name="description"
-          labelText={ISSUE_FORM_LABEL.CONTENT}
-          placeholderText="내용을 입력해주세요."
+          name={ISSUE_FORM_NAME.DESCRIPTION}
+          labelText={ISSUE_FORM_LABEL.DESCRIPTION}
+          placeholderText={ISSUE_FORM_PLACEHOLDER.DESCRIPTION}
           value={issueInputValue.description}
           onChange={setIssueInputValue}
         />
         <Input
           type="datetime-local"
-          name="lastDate"
-          labelText={ISSUE_FORM_LABEL.DUE_DATE}
+          name={ISSUE_FORM_NAME.LAST_DATE}
+          labelText={ISSUE_FORM_LABEL.LAST_DATE}
           value={issueInputValue.lastDate}
-          placeholderText="마감일을 입력해주세요."
+          placeholderText={ISSUE_FORM_PLACEHOLDER.LAST_DATE}
           onChange={setIssueInputValue}
         />
         <div className="issue-btn-handler">
