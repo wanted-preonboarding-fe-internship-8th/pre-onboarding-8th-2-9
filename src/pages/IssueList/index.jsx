@@ -106,9 +106,9 @@ export default function IssueList() {
                 </div>
                 <ul
                   onDragEnter={
-                    dragging &&
-                    dragItem.current.groupId !== groupId &&
-                    group.items.length
+                    // dragItem.current.groupId !== groupId &&
+                    // group.items.length
+                    dragging && dragItem.current.groupId !== groupId
                       ? (e) => handleDragEnter(e, { groupId, issueItemId: 0 })
                       : null
                   }
