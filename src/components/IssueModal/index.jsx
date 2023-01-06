@@ -10,7 +10,7 @@ import Input from '../Input';
 import Index from '../TextArea';
 
 export default function IssueModal({ ...props }) {
-  const { type, closeModal, managers, issueList, issue } = props;
+  const { type, issueList, closeModal, status, managers, issue } = props;
   const [toast, setToast] = useRecoilState(toastState);
   const [searchInput, setSearchInput] = useState('');
   const [searchedManagers, setSearchedManagers] = useState([]);
@@ -20,42 +20,41 @@ export default function IssueModal({ ...props }) {
     manager: issue?.manager || '',
     managerId: 0,
     description: issue?.description || '',
-    status: issue?.status || 'todo',
+    status: status,
     lastDate: issue?.lastDate || '',
   });
 
-  const onChangeStatus = (e) => {
-    setIssueInputValue({
-      ...issueInputValue,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const onSubmitAddIssue = () => {
+  const onSubmitHandleIssue = () => {
     const groupIndex = issueList.findIndex(
       (group) => group.label === issueInputValue.status
     );
-    issueList[groupIndex].items = [
-      ...issueList[groupIndex].items,
-      issueInputValue,
-    ];
-    localStorage.setItem('issueList', JSON.stringify(issueList));
-    setToast({ status: 'success', message: '성공적으로 등록되었습니다.' });
-    closeModal();
-  };
 
-  const onSubmitEditIssue = () => {
-    const issueList = JSON.parse(localStorage.getItem('issueList'));
-    const groupIndex = issueList?.findIndex(
-      (group) => group.label === issueInputValue.status
-    );
-    const issueIndex = issueList[groupIndex]?.items.findIndex(
+    const issueIndex = issueList[groupIndex].items?.findIndex(
       (item) => item.id === issueInputValue.id
     );
-    issueList[groupIndex].items[issueIndex] = issueInputValue;
-    localStorage.setItem('issueList', JSON.stringify(issueList));
-    setToast({ status: 'success', message: '성공적으로 수정되었습니다.' });
-    closeModal();
+    try {
+      type === 'ADD'
+        ? (issueList[groupIndex].items = [
+            ...issueList[groupIndex].items,
+            issueInputValue,
+          ])
+        : (issueList[groupIndex].items[issueIndex] = issueInputValue);
+      localStorage.setItem('issueList', JSON.stringify(issueList));
+      setToast({
+        status: 'success',
+        message:
+          type === 'ADD'
+            ? '성공적으로 등록되었습니다.'
+            : '성공적으로 수정되었습니다.',
+      });
+      closeModal();
+    } catch {
+      setToast({
+        status: 'error',
+        message: '잠시 후 다시 시도해주세요.',
+      });
+      closeModal();
+    }
   };
 
   const searchManagers = (e) => {
@@ -134,19 +133,6 @@ export default function IssueModal({ ...props }) {
           value={issueInputValue.description}
           onChange={setIssueInputValue}
         />
-        <p className="title">상태</p>
-        <select
-          name="status"
-          value={issueInputValue.status}
-          className="status-select"
-          onChange={onChangeStatus}
-        >
-          {Object.values(ISSUE_STATE).map((state) => (
-            <option key={state.value} value={state.value}>
-              {state.label}
-            </option>
-          ))}
-        </select>
         <Input
           type="datetime-local"
           name="lastDate"
@@ -158,7 +144,7 @@ export default function IssueModal({ ...props }) {
         <Button
           text="저장"
           background="var(--progress)"
-          onClick={type === 'ADD' ? onSubmitAddIssue : onSubmitEditIssue}
+          onClick={onSubmitHandleIssue}
         />
       </IssueAddModalContainer>
       <Overlay onClick={closeModal} />
@@ -186,8 +172,6 @@ const IssueAddModalContainer = styled.div`
   }
 
   & .manager-list {
-    display: flex;
-    flex-direction: row;
     text-align: left;
     & .manager {
       & .chip {

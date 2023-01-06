@@ -13,9 +13,10 @@ export default function IssueCard({ ...props }) {
     handleDragStart,
     handleDragEnter,
     managers,
-    issueList,
     dragItem,
   } = props;
+
+  const issueList = JSON.parse(localStorage.getItem('issueList'));
 
   const [isEdit, setIsEdit] = useState(false);
 
@@ -32,6 +33,7 @@ export default function IssueCard({ ...props }) {
         draggable
         onDragStart={(e) => handleDragStart(e, { groupId, issueItemId })}
         onDragEnter={
+          // () => console.log(dragItem.current.groupId == groupId)
           dragging && dragItem.current.groupId === groupId
             ? (e) => handleDragEnter(e, { groupId, issueItemId })
             : null
@@ -48,6 +50,7 @@ export default function IssueCard({ ...props }) {
           closeModal={closeModal}
           managers={managers}
           issueList={issueList}
+          status={issue.status}
         />
       )}
     </>
