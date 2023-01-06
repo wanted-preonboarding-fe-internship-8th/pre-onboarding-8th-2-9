@@ -1,6 +1,7 @@
 # Issue Tracking App with React.js
 
 ## 배포 링크
+- [Issue Tracking App with React.js](https://pre-onboarding-8th-2-9.vercel.app/)
 
 ## 개발 과정 및 Best Practice
 - [1. 이슈 CRUD](https://github.com/wanted-preonboarding-fe-internship-8th/pre-onboarding-8th-2-9/wiki/1.-%EC%9D%B4%EC%8A%88-CRUD)
