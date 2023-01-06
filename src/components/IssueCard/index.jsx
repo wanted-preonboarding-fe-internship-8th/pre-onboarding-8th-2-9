@@ -33,7 +33,6 @@ export default function IssueCard({ ...props }) {
         draggable
         onDragStart={(e) => handleDragStart(e, { groupId, issueItemId })}
         onDragEnter={
-          // () => console.log(dragItem.current.groupId == groupId)
           dragging && dragItem.current.groupId === groupId
             ? (e) => handleDragEnter(e, { groupId, issueItemId })
             : null

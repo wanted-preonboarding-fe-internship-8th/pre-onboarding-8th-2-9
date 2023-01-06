@@ -49,7 +49,6 @@ export default function IssueModal({ ...props }) {
   };
 
   const onDeleteIssue = () => {
-    console.log(1);
     try {
       const newList = issueList[STATUS_INDEX].items.filter(
         (item) => item.id !== issueInputValue.id
