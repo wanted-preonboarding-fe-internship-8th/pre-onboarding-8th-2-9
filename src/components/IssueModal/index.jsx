@@ -18,7 +18,7 @@ import Index from '../TextArea';
 export default function IssueModal({ ...props }) {
   const { type, issueList, closeModal, status, managers, issue } = props;
   const [toast, setToast] = useRecoilState(toastState);
-  const [searchInput, setSearchInput] = useState('');
+  const [searchInput, setSearchInput] = useState(issue?.manager || '');
   const [searchedManagers, setSearchedManagers] = useState(managers);
   const STATUS_INDEX = status === 'todo' ? 0 : status === 'progress' ? 1 : 2;
 
