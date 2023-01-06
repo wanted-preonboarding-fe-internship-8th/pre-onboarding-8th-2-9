@@ -7,6 +7,7 @@ import Button from '../../components/Button';
 import IssueCard from '../../components/IssueCard';
 import IssueAddModal from '../../components/IssueModal';
 import Loader from '../../components/Loader';
+import Toast from '../../components/Toast';
 import { initialIssueList, managerList } from '../../data';
 
 export default function IssueList() {
@@ -20,12 +21,16 @@ export default function IssueList() {
   const dragNode = useRef();
 
   const getIssueList = () => {
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 500);
     if (localStorage.getItem('issueList')) {
       setIssueList(JSON.parse(localStorage.getItem('issueList')));
     }
+    setTimeout(() => {
+      try {
+        setIsLoading(false);
+      } catch {
+        setToast('error', '잠시 후에 다시 시도해주세요');
+      }
+    }, 500);
   };
 
   const handleDragStart = (e, params) => {
@@ -72,6 +77,7 @@ export default function IssueList() {
   };
 
   const closeModal = () => {
+    setIsLoading(true);
     setIsModalOpen({ ...isModalOpen, open: false });
     getIssueList();
   };
@@ -82,7 +88,9 @@ export default function IssueList() {
 
   useEffect(() => {
     if (!toast) return;
-    setTimeout(() => setToast(''), [1500]);
+    setTimeout(() => {
+      setToast('');
+    }, [1500]);
   }, [toast]);
 
   return (
@@ -152,6 +160,7 @@ export default function IssueList() {
           closeModal={closeModal}
         />
       )}
+      {toast.status && <Toast status={toast.status} message={toast.message} />}
     </>
   );
 }
