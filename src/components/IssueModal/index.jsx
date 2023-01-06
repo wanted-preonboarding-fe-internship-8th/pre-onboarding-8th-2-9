@@ -14,6 +14,8 @@ export default function IssueModal({ ...props }) {
   const [toast, setToast] = useRecoilState(toastState);
   const [searchInput, setSearchInput] = useState('');
   const [searchedManagers, setSearchedManagers] = useState([]);
+  const STATUS_INDEX = status === 'todo' ? 0 : status === 'progress' ? 1 : 2;
+
   const [issueInputValue, setIssueInputValue] = useInput({
     id: issue?.id || Date.now(),
     title: issue?.title || '',
@@ -22,23 +24,20 @@ export default function IssueModal({ ...props }) {
     description: issue?.description || '',
     status: status,
     lastDate: issue?.lastDate || '',
+    order: issueList[STATUS_INDEX].items.length + 1,
   });
 
   const onSubmitHandleIssue = () => {
-    const groupIndex = issueList.findIndex(
-      (group) => group.label === issueInputValue.status
-    );
-
-    const issueIndex = issueList[groupIndex].items?.findIndex(
+    const issueIndex = issueList[STATUS_INDEX].items?.findIndex(
       (item) => item.id === issueInputValue.id
     );
     try {
       type === 'ADD'
-        ? (issueList[groupIndex].items = [
-            ...issueList[groupIndex].items,
+        ? (issueList[STATUS_INDEX].items = [
+            ...issueList[STATUS_INDEX].items,
             issueInputValue,
           ])
-        : (issueList[groupIndex].items[issueIndex] = issueInputValue);
+        : (issueList[STATUS_INDEX].items[issueIndex] = issueInputValue);
       localStorage.setItem('issueList', JSON.stringify(issueList));
       setToast({
         status: 'success',
