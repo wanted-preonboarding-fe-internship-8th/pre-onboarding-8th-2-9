@@ -47,6 +47,12 @@ export default function IssueList() {
           0,
           selectedList?.splice(currentItem?.issueItemId, 1)[0]
         );
+        targetList[0].status =
+          params.groupId === 0
+            ? 'todo'
+            : params.groupId === 1
+            ? 'progress'
+            : 'complete';
         dragItem.current = params;
         return newList;
       });
