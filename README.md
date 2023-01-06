@@ -8,6 +8,7 @@
 
 - [1. 이슈 CRUD](https://github.com/wanted-preonboarding-fe-internship-8th/pre-onboarding-8th-2-9/wiki/1.-%EC%9D%B4%EC%8A%88-CRUD)
 - [2. Issue 데이터 자료구조 및 출력](https://github.com/wanted-preonboarding-fe-internship-8th/pre-onboarding-8th-2-9/wiki/2.-Issue-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EC%9E%90%EB%A3%8C%EA%B5%AC%EC%A1%B0-%EB%B0%8F-%EC%B6%9C%EB%A0%A5)
+- [3. Drag and Drop 기능 구현](https://github.com/wanted-preonboarding-fe-internship-8th/pre-onboarding-8th-2-9/wiki/3.-Drag-and-Drop-%EA%B8%B0%EB%8A%A5-%EA%B5%AC%ED%98%84)
 - [5. 이슈 상세보기 수정 삭제, 예외처리, 로딩](https://github.com/wanted-preonboarding-fe-internship-8th/pre-onboarding-8th-2-9/wiki/5.-%EC%9D%B4%EC%8A%88-%EC%83%81%EC%84%B8%EB%B3%B4%EA%B8%B0-%EC%88%98%EC%A0%95-%EC%82%AD%EC%A0%9C,-%EC%98%88%EC%99%B8%EC%B2%98%EB%A6%AC,-%EB%A1%9C%EB%94%A9)
 
 ## 실행 방법
