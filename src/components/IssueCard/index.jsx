@@ -4,17 +4,55 @@ import styled from 'styled-components';
 import IssueModal from '../IssueModal';
 
 export default function IssueCard({ ...props }) {
-  const { issue } = props;
+  const {
+    issue,
+    groupId,
+    getIssueList,
+    issueItemId,
+    dragging,
+    handleDragStart,
+    handleDragEnter,
+    managers,
+    dragItem,
+  } = props;
+
+  const issueList = JSON.parse(localStorage.getItem('issueList'));
+
   const [isEdit, setIsEdit] = useState(false);
+
+  const openModal = () => setIsEdit(true);
+  const closeModal = () => {
+    setIsEdit(false);
+    getIssueList();
+  };
 
   return (
     <>
-      <IssueCardContainer draggable onClick={() => setIsEdit(true)}>
-        <p className="title">{issue.title}</p>
-        <p className="manager">{issue.manager}</p>
-        <p className="last-date">{issue.lastDate}</p>
+      <IssueCardContainer
+        onClick={openModal}
+        draggable
+        onDragStart={(e) => handleDragStart(e, { groupId, issueItemId })}
+        onDragEnter={
+          // () => console.log(dragItem.current.groupId == groupId)
+          dragging && dragItem.current.groupId === groupId
+            ? (e) => handleDragEnter(e, { groupId, issueItemId })
+            : null
+        }
+      >
+        <p className="title">{issue?.title}</p>
+        <p className="manager">{issue?.manager}</p>
+        <p className="last-date">{issue?.lastDate}</p>
       </IssueCardContainer>
-      {isEdit && <IssueModal issue={issue} />}
+      {isEdit && (
+        <IssueModal
+          type="EDIT"
+          issue={issue}
+          closeModal={closeModal}
+          managers={managers}
+          issueList={issueList}
+          status={issue.status}
+        />
+      )}
     </>
   );
 }
