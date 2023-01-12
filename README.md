@@ -56,10 +56,7 @@ $ npm run prepare
     </td>
     <td align="center">
       <img src="https://user-images.githubusercontent.com/62709718/208676156-350f5e57-7568-497a-ba32-cf7f849ef688.png" width="100px;" alt=""/>
-    </td>
-    <td align="center">
-      <img src="https://user-images.githubusercontent.com/62709718/208676069-16f11acd-8447-4d72-ab0b-f6e074373dea.png" width="100px;" alt=""/>
-    </td>    
+    </td> 
     <td align="center">
       <img src="https://user-images.githubusercontent.com/62709718/208676001-b838be17-a6da-4954-8382-7b537a359f2a.png" width="100px;" alt=""/>
     </td>
@@ -80,12 +77,7 @@ $ npm run prepare
       <a href="https://github.com/jong-k">
         <div>jong-k</div>
       </a>
-    </td>
-    <td align="center">
-      <a href="https://github.com/Duck-98">
-        <div>Duck-98</div>
-      </a>
-    </td>    
+    </td>  
     <td align="center">
       <a href="https://github.com/shinwonse">
         <div>shinwonse</div>
